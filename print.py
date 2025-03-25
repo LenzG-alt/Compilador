@@ -1,28 +1,40 @@
 import ply.lex as lex
 
 tokens = (
-'oSuma','oResta','oMult','oDiv','oResiduo',
-'oOR','oAND','oMayor','oMenor','oIgual','oDiff',
-'oDot','oComa','oSemi_coma',
-'corchLeft','corchRight','parLeft','parRight','keyLeft','keyRight',
-'For','While','Return','Do',
-'In','Out',
-'Void','Main',
-'Print',
-'If','Else',
-'false','True',
-'int',
-'float',
-'bool',
-'string'
-    )
+'oSUMA','oRESTA','oMULT','oDIV','oRESIDUO',
 
-t_PLUS = r'\+'
-t_MINUS = r'\-'
-t_TIMES = r'\*'
-t_DIVIDE = r'/'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
+'oOR','oAND','oMAYOR','oMENOR','oIGUAL','oDIFF',
+
+'oDot','oComa','oSemi_coma',
+
+'corchLEFT','corchRIGHT','parLEFT','parRIGHT','keyLEFT','keyRIGHT',
+
+'For','While','Return','Do',
+
+'In','Out',
+
+'Void','Main','Print',
+
+'If','Else','false','True',
+
+'int','float','bool','string',
+
+'NUMBER', 'new_line'   
+)
+
+t_oSUMA = r'\+'
+t_oRESTA = r'\-'
+t_oMULT = r'\*'
+t_oDIV = r'/'
+t_oRESIDUO = r'\('
+
+"""
+t_oOR = r'\'
+t_oAND = r'\'
+t_oMAYOR = r'\'
+t_oMENOR = r'\'
+t_oIGUAL = r'\'
+"""
 
 def t_NUMBER(t):
     r'\d+'

@@ -73,9 +73,8 @@ Evola es un lenguaje de programación que combina la simplicidad de Python, la e
 
 ```
 void main() {
-    print("Hola Mundo");
+    print "Hola Mundo";
 }
-
 ```
 
 ### **Bucles Anidados**
@@ -90,8 +89,6 @@ void main() {
         }
     }
 }
-
-
 ```
 
 
@@ -100,7 +97,7 @@ void main() {
 
 ```
 int factorial(int n) {
-    if n < 2 {
+    if (n < 2) {
         return 1;
     } else {
         return n * factorial(n - 1);

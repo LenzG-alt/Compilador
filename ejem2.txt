@@ -1,0 +1,13 @@
+bool a = true;
+bool b = false;
+if a && b {
+    print "Ambos son verdaderos";
+} else {
+    print "Al menos uno es falso";
+}
+
+if a || b {
+    print "Al menos uno es verdadero";
+} else {
+    print "Ambos son falsos";
+}

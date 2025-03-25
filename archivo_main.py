@@ -6,11 +6,11 @@ tokens = (
     'oOR', 'oAND', 'oMAYOR', 'oMENOR', 'oIGUAL', 'oDIFF',
     'oDot', 'oComa', 'oSemi_coma',
     'corchLEFT', 'corchRIGHT', 'parLEFT', 'parRIGHT', 'keyLEFT', 'keyRIGHT',
-    'For', 'While', 'Return', 'Do',
-    'In', 'Out',
-    'Void', 'Main', 'Print',
-    'If', 'Else', 'false', 'True',
-    'int', 'float', 'bool', 'string',
+    'for', 'while', 'return', 'do',
+    'in', 'out',
+    'void', 'main', 'print',
+    'if', 'else', 'false', 'true',
+    'INT', 'float', 'bool', 'string',
     'NUMBER', 'new_line', 'variable_float', 'variable_bool', 'variable_int', 'literal', 'Id'
 )
 
@@ -39,51 +39,51 @@ t_parRIGHT = r'\)'
 t_keyLEFT = r'\['
 t_keyRIGHT = r'\]'
 
-def t_For(t):
-    r'\bFor\b'
-    t.type = 'For'
+def t_for(t):
+    r'\bfor\b'
+    t.type = 'for'
     return t
 
-def t_While(t):
-    r'\bWhile\b'
-    t.type = 'While'
+def t_while(t):
+    r'\bwhile\b'
+    t.type = 'while'
     return t
 
-def t_Return(t):
-    r'\bReturn\b'
-    t.type = 'Return'
+def t_return(t):
+    r'\breturn\b'
+    t.type = 'return'
     return t
-def t_Do(t):
-    r'\bDo\b'
-    t.type = 'Do'
-    return t
-
-t_In = r'\bIn\b'
-t_Out = r'\bOut\b'
-
-def t_Void(t):
-    r'\bVoid\b'
-    t.type = 'Void'
+def t_do(t):
+    r'\bdo\b'
+    t.type = 'do'
     return t
 
-def t_Main(t):
-    r'\bMain\b'
-    t.type = 'Main'
+t_in = r'\bIn\b'
+t_out = r'\bOut\b'
+
+def t_void(t):
+    r'\bvoid\b'
+    t.type = 'void'
     return t
 
-def t_Print(t):
-    r'\bPrint\b'
-    t.type = 'Print'
+def t_main(t):
+    r'\bvmain\b'
+    t.type = 'main'
     return t
 
-def t_If(t):
-    r'\bIf\b'
-    t.type = 'If'
+def t_print(t):
+    r'\bprint\b'
+    t.type = 'print'
     return t
 
-def t_Else(t):
-    r'\bPrint\b'
-    t.type = 'Else'
+def t_if(t):
+    r'\bif\b'
+    t.type = 'if'
+    return t
+
+def t_else(t):
+    r'\belse\b'
+    t.type = 'else'
     return t
 
 def t_false(t):
@@ -91,14 +91,14 @@ def t_false(t):
     t.type = 'false'
     return t
 
-def t_True(t):
-    r'\bTrue\b'
-    t.type = 'True'
+def t_true(t):
+    r'\btrue\b'
+    t.type = 'true'
     return t
 
-def t_int(t):
+def t_INT(t):
     r'\bint\b'
-    t.type = 'int'
+    t.type = 'INT'
     return t
 
 
@@ -147,37 +147,42 @@ def t_error(t):
 # Creación del lexer
 lexer = lex.lex()
 
-# Datos de entrada para probar
-data = '''int x = 5;
-float y = 3.14;
-bool isTrue = 1;
-bool isFalse = 0;
-string saludo = "Hola Mundo";
-Print saludo;
+def leer_archivo(archivo):
+    try:
+        with open(archivo, 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"El archivo {archivo} no se encuentra.")
+        return None
 
-Void main() {
-    int a = 3;
-    float b = 4.5;
-    bool result = a > b;
-    Print a + b;
-    
-    If a > b {
-        Print "A es mayor que B";
-    } Else {
-        Print "B es mayor que A";
-    }
-    
-    For int i = 0; i < 5; i++ {
-        Print i;
-    }
-}'''
+# Función para escribir los tokens en un archivo
+def escribir_tokens_en_archivo(tokens, archivo_salida):
+    with open(archivo_salida, 'w') as f:
+        for token in tokens:
+            f.write(f"Token: {token.type}, Valor: {token.value}, Línea: {token.lineno}\n")
 
-# Pasar los datos de entrada al lexer
-lexer.input(data)
+# Leer los datos desde el archivo 'data.txt'
+data = leer_archivo("c:/Users/arapa/Documents/Compilador/data.txt")
+#data = leer_archivo("data.txt")
+#data = leer_archivo("ejem1.txt")
+#data = leer_archivo("ejem2.txt")
+#data = leer_archivo("ejem3.txt")
 
-# Imprimir los tokens reconocidos
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
+# Si el archivo se leyó correctamente, pasamos los datos al lexer
+if data:
+    lexer.input(data)
+
+    # Crear una lista para guardar los tokens
+    tokens_generados = []
+
+    # Generar los tokens
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        tokens_generados.append(tok)
+
+    # Escribir los tokens en un archivo de salida
+    escribir_tokens_en_archivo(tokens_generados, 'tokens_salida.txt')
+
+    print("Los tokens han sido escritos en 'tokens_salida.txt'.")

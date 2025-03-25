@@ -11,7 +11,7 @@ tokens = (
     'Void', 'Main', 'Print',
     'If', 'Else', 'false', 'True',
     'int', 'float', 'bool', 'string',
-    'NUMBER', 'new_line'
+    'NUMBER', 'new_line', 'variable_float', 'variable_bool', 'variable_int', 'literal', 'Id'
 )
 
 # Definición de las expresiones regulares para los tokens
@@ -39,27 +39,91 @@ t_parRIGHT = r'\)'
 t_keyLEFT = r'\['
 t_keyRIGHT = r'\]'
 
-t_For = r'\bFor\b'
-t_While = r'\bWhile\b'
-t_Return = r'\bReturn\b'
-t_Do = r'\bDo\b'
+def t_For(t):
+    r'\bFor\b'
+    t.type = 'For'
+    return t
+
+def t_While(t):
+    r'\bWhile\b'
+    t.type = 'While'
+    return t
+
+def t_Return(t):
+    r'\bReturn\b'
+    t.type = 'Return'
+    return t
+def t_Do(t):
+    r'\bDo\b'
+    t.type = 'Do'
+    return t
 
 t_In = r'\bIn\b'
 t_Out = r'\bOut\b'
 
-t_Void = r'\bVoid\b'
-t_Main = r'\bMain\b'
-t_Print = r'\bPrint\b'
+def t_Void(t):
+    r'\bVoid\b'
+    t.type = 'Void'
+    return t
 
-t_If = r'\bIf\b'
-t_Else = r'\bElse\b'
-t_false = r'\bfalse\b'
-t_True = r'\bTrue\b'
+def t_Main(t):
+    r'\bMain\b'
+    t.type = 'Main'
+    return t
 
-t_int = r'\bint\b'
-t_float = r'\bfloat\b'
-t_bool = r'\bbool\b'
-t_string = r'\bstring\b'
+def t_Print(t):
+    r'\bPrint\b'
+    t.type = 'Print'
+    return t
+
+def t_If(t):
+    r'\bIf\b'
+    t.type = 'If'
+    return t
+
+def t_Else(t):
+    r'\bPrint\b'
+    t.type = 'Else'
+    return t
+
+def t_false(t):
+    r'\bfalse\b'
+    t.type = 'false'
+    return t
+
+def t_True(t):
+    r'\bTrue\b'
+    t.type = 'True'
+    return t
+
+def t_int(t):
+    r'\bint\b'
+    t.type = 'int'
+    return t
+
+
+def t_float(t):
+    r'\bfloat\b'
+    t.type = 'float'
+    return t
+
+
+def t_bool(t):
+    r'\bbool\b'
+    t.type = 'bool'
+    return t
+
+
+def t_string(t):
+    r'\bstring\b'
+    t.type = 'string'
+    return t
+# Nuevos tokens
+t_variable_float = r'[0-9]+\.[0-9]*'  # Números decimales (flotantes)
+t_variable_bool = r'[01]'  # 0 o 1, valores booleanos
+t_variable_int = r'[1-9]+'  # Números enteros positivos
+t_literal = r'\".*?\"'  # Cadenas de texto (literales)
+t_Id = r'[a-zA-Z][a-zA-Z0-9]*'  # Identificadores
 
 # Token para números
 def t_NUMBER(t):
@@ -85,14 +149,16 @@ lexer = lex.lex()
 
 # Datos de entrada para probar
 data = '''int x = 5;
-int y = 10;
-int suma = x + y;
-Print suma;
+float y = 3.14;
+bool isTrue = 1;
+bool isFalse = 0;
+string saludo = "Hola Mundo";
+Print saludo;
 
 Void main() {
-    Print "Hola Mundo";
     int a = 3;
-    int b = 4;
+    float b = 4.5;
+    bool result = a > b;
     Print a + b;
     
     If a > b {

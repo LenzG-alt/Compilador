@@ -25,7 +25,7 @@ t_oOR = r'\|\|'  # OR lógico
 t_oAND = r'&&'   # AND lógico
 t_oMAYOR = r'>'  # Mayor que
 t_oMENOR = r'<'  # Menor que
-t_oIGUAL = r'==' # Igual a
+t_oIGUAL = r'=' # Igual a
 t_oDIFF = r'!='  # Diferente de
 
 t_oDot = r'\.'

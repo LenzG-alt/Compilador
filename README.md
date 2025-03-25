@@ -3,16 +3,16 @@
 ##  **Nombre del Lenguaje**
 EVOLA
 
-##**Curso**
+## **Curso**
 Compiladores
 
-##**Nombre del docente**
+## **Nombre del docente**
 Vicente Enrique Machaca Arceda
 
-##**Descripción del Proyecto**
+## **Descripción del Proyecto**
 Evola es un lenguaje de programación que combina la simplicidad de Python, la eficiencia de “C + +” y se tomaron algunos elementos de otros lenguajes, con el objetivo de crear una herramienta con una sintaxis minimalista, permitiendo una fácil comprensión y escritura. La idea es ofrecer un compilador que haga el trabajo de forma eficiente, pero sin complicaciones, permitiendo que tanto novatos como expertos programen de manera ágil y productiva. 
 
-## Integrantes del Grupo
+## **Integrantes del Grupo**
 
 1. **Castro Mamani Sebastian** 
 2. **Arapa Chua Davis** 
@@ -20,7 +20,7 @@ Evola es un lenguaje de programación que combina la simplicidad de Python, la e
 4. **Delgado Chipana Piero Adrian**
 
 
-##**Especificación Léxica**
+## **Especificación Léxica**
 
 | **Token**         | **Expresión Regular**                          | **Descripción**                                |
 |---------------|--------------------------------------------|--------------------------------------------|
@@ -67,9 +67,9 @@ Evola es un lenguaje de programación que combina la simplicidad de Python, la e
 | **bool**          | `bool`                                     | Tipo booleano                              |
 | **string**        | `string`                                   | Tipo string                                |
 
-##Ejemplo de Código
+## **Ejemplo de Código**
 
-###Hola Mundo
+### **Hola Mundo**
 
 ```
 void main() {
@@ -78,7 +78,7 @@ void main() {
 
 ```
 
-###Bucles Anidados
+### **Bucles Anidados**
 
 ```
 void main() {
@@ -96,7 +96,7 @@ void main() {
 
 
 
-###Recursividad
+### **Recursividad**
 
 ```
 int factorial(int n) {

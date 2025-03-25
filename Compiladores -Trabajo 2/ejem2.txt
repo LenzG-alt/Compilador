@@ -1,13 +1,9 @@
-bool a = true;
-bool b = false;
-if a && b {
-    print "Ambos son verdaderos";
-} else {
-    print "Al menos uno es falso";
-}
-
-if a || b {
-    print "Al menos uno es verdadero";
-} else {
-    print "Ambos son falsos";
+void main() {
+    int i, j;
+    for (i = 1; i < 5; i = i + 1) {
+        for (j = 1; j < 5; j = j + 1) {
+            print i;
+            print j;
+        }
+    }
 }

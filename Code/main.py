@@ -1,8 +1,67 @@
 import csv
 
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ##
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ##
+class Node:
+    """
+    Clase para representar un nodo en el árbol sintáctico.
+    """
+    def __init__(self, label, is_terminal=False, value=None):
+        self.label = label  # Etiqueta del nodo (no terminal o terminal)
+        self.is_terminal = is_terminal  # Flag para indicar si es un terminal
+        self.value = value  # Valor del token (para terminales)
+        self.children = []  # Hijos del nodo
+        self.node_id = None  # ID único para el nodo en el gráfico
+
+    def add_child(self, node):
+        """Añade un hijo al nodo."""
+        self.children.append(node)
+        return node
+
+    def to_graphviz(self):
+        """
+        Genera el código Graphviz para visualizar el árbol.
+        """
+        nodes = []
+        edges = []
+        
+        def traverse(node, node_counter=[0]):
+            if node.node_id is None:
+                node.node_id = f"node{node_counter[0]}"
+                node_counter[0] += 1
+            
+            # Definir el estilo del nodo
+            shape = "box" if node.is_terminal else "ellipse"
+            label = node.value if node.is_terminal and node.value else node.label
+            
+            # Añadir nodo
+            nodes.append(f'  {node.node_id} [label="{label}", shape={shape}];')
+            
+            # Añadir aristas
+            for child in node.children:
+                child_id = traverse(child, node_counter)
+                edges.append(f'  {node.node_id} -> {child_id};')
+                
+            return node.node_id
+        
+        traverse(self)
+        
+        graphviz_code = "digraph SyntaxTree {\n"
+        graphviz_code += "  node [fontname=\"Arial\"];\n"
+        graphviz_code += "\n".join(nodes)
+        graphviz_code += "\n"
+        graphviz_code += "\n".join(edges)
+        graphviz_code += "\n}"
+        
+        return graphviz_code
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =##
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =##
+
 class AnalizadorSintacticoLL:
     def __init__(self, archivo_tabla):
         self.tabla = self.cargar_tabla_csv(archivo_tabla)
+        self.node_counter = 0
     
     def cargar_tabla_csv(self, archivo):
         tabla = {}
@@ -19,12 +78,21 @@ class AnalizadorSintacticoLL:
         return tabla
 
     def analizar(self, tokens):
-       
+        """
+        Analiza una lista de tokens utilizando el algoritmo LL y construye un árbol sintáctico.
+        
+        Args:
+            tokens: Lista de tokens a analizar
+            
+        Returns:
+            Un diccionario con el resultado del análisis, mensaje, pasos y el árbol sintáctico
+        """
         # Agregar el símbolo de fin de entrada
         tokens.append('$')
         
         # Inicializar pila y puntero de entrada
-        pila = ['$', 'E']  # Comenzamos con el símbolo inicial E y el marcador de fondo $
+        root = Node('E')  # Nodo raíz con el símbolo inicial
+        pila = [('$', None), ('E', root)]  # Pila con tuplas (símbolo, nodo)
         indice = 0
         token_actual = tokens[indice]
         
@@ -32,17 +100,23 @@ class AnalizadorSintacticoLL:
         pasos = []
         
         paso_num = 1
-        while pila[-1] != '$':  # Mientras no hayamos llegado al fondo de la pila
-            X = pila[-1]  # Tope de la pila
+        while pila[-1][0] != '$':  # Mientras no hayamos llegado al fondo de la pila
+            X, node = pila[-1]  # Tope de la pila
             
             # Guardamos el estado actual
             entrada_restante = ' '.join(tokens[indice:])
-            pila_actual = ' '.join(pila)
+            pila_actual = ' '.join([p[0] for p in pila])
             accion = ""
             
             if X == token_actual:  # Si coincide con el token actual
                 accion = f"Emparejar {X}"
                 pila.pop()         # Eliminar de la pila
+                
+                # Si el nodo no es None, marcarlo como terminal y asignar el valor
+                if node:
+                    node.is_terminal = True
+                    node.value = X
+                
                 indice += 1        # Avanzar al siguiente token
                 if indice < len(tokens):
                     token_actual = tokens[indice]
@@ -54,16 +128,31 @@ class AnalizadorSintacticoLL:
                 pila.pop()         # Eliminar no terminal
                 
                 # Agregar la producción a la pila (en orden inverso)
-                for simbolo in reversed(produccion):
+                child_nodes = []
+                for simbolo in produccion:
                     if simbolo != 'ε':  # No agregar epsilon
-                        pila.append(simbolo)
+                        child_node = Node(simbolo)
+                        child_nodes.append(child_node)
+                        
+                # Agregar los nodos como hijos del nodo actual
+                if node:
+                    for child in child_nodes:
+                        node.add_child(child)
+                
+                # Agregar a la pila en orden inverso
+                for i in range(len(child_nodes) - 1, -1, -1):
+                    simbolo = produccion[i] if i < len(produccion) else None
+                    if simbolo != 'ε':
+                        pila.append((simbolo, child_nodes[i]))
             else:
                 # Error: no hay regla para esta combinación
-                pasos.append((paso_num, pila_actual, entrada_restante, "ERROR: "))
+                pasos.append((paso_num, pila_actual, entrada_restante, "ERROR: No hay regla definida"))
                 return {
                     "resultado": "Error sintáctico",
                     "mensaje": f"Error sintáctico en el token '{token_actual}' (posición {indice}). No hay regla definida para el no terminal '{X}'.",
-                    "pasos": pasos
+                    "pasos": pasos,
+                    "arbol": None,
+                    "graphviz": None
                 }
             
             pasos.append((paso_num, pila_actual, entrada_restante, accion))
@@ -72,27 +161,43 @@ class AnalizadorSintacticoLL:
         # Verificar que hemos consumido toda la entrada
         if token_actual == '$':
             entrada_restante = ' '.join(tokens[indice:])
-            pila_actual = ' '.join(pila)
+            pila_actual = ' '.join([p[0] for p in pila])
             pasos.append((paso_num, pila_actual, entrada_restante, "ACEPTAR"))
+            
+            # Generar el código Graphviz
+            graphviz_code = root.to_graphviz()
             
             return {
                 "resultado": "Aceptado",
                 "mensaje": "Análisis completado: La cadena pertenece a la gramática.",
-                "pasos": pasos
+                "pasos": pasos,
+                "arbol": root,
+                "graphviz": graphviz_code
             }
         else:
             entrada_restante = ' '.join(tokens[indice:])
-            pila_actual = ' '.join(pila)
+            pila_actual = ' '.join([p[0] for p in pila])
             pasos.append((paso_num, pila_actual, entrada_restante, "ERROR: Entrada no consumida"))
             
             return {
                 "resultado": "Error sintáctico",
                 "mensaje": f"Error sintáctico: Entrada no consumida completamente. Token actual: '{token_actual}'",
-                "pasos": pasos
+                "pasos": pasos,
+                "arbol": None,
+                "graphviz": None
             }
 
 def analizar_desde_archivo(archivo_tokens, archivo_tabla):
-    
+    """
+    Analiza varias líneas desde un archivo de tokens, utilizando una tabla sintáctica.
+
+    Args:
+        archivo_tokens: Ruta al archivo que contiene cadenas de tokens (una por línea).
+        archivo_tabla: Ruta al archivo CSV con la tabla sintáctica.
+
+    Returns:
+        Lista de resultados del análisis por cada línea.
+    """
     with open(archivo_tokens, 'r') as f:
         lineas = f.readlines()
 
@@ -118,33 +223,24 @@ def analizar_desde_archivo(archivo_tokens, archivo_tabla):
         titulos = ["Paso", "Pila", "Entrada", "Acción"]
         anchos = [4, 20, 20, 25]
         imprimir_tabla(resultado['pasos'], titulos, anchos)
+        
+        if resultado["graphviz"]:
+            print("\n=== ÁRBOL SINTÁCTICO (GRAPHVIZ) ===")
+            print(resultado["graphviz"])
+            print("\nPuede visualizar este árbol en: https://dreampuf.github.io/GraphvizOnline")
 
     return resultados
 
-def analizar_desde_archivo2(archivo_tokens, archivo_tabla):
-    with open(archivo_tokens, 'r') as f:
-        cadena = f.read().strip()
-    
-    tokens = cadena.split()
-    analizador = AnalizadorSintacticoLL("tabla_sintactica.csv")
-    resultado = analizador.analizar(tokens)
 
-    # Imprimir resultado
-    print("\n=== ANÁLISIS SINTÁCTICO ===")
-    print(f"Entrada: {cadena}")
-    print(f"Resultado: {resultado['resultado']}")
-    print(f"Mensaje: {resultado['mensaje']}")
-    print("\n=== PASOS DEL ANÁLISIS ===")
-
-    # Tabla
-    titulos = ["Paso", "Pila", "Entrada", "Acción"]
-    anchos = [4, 20, 20, 25]
-    imprimir_tabla(resultado['pasos'], titulos, anchos)
-
-    return resultado
-    
 def imprimir_tabla(datos, titulos, anchos):
+    """
+    Imprime una tabla en la consola sin usar librerías externas.
     
+    Args:
+        datos: Lista de tuplas con los datos
+        titulos: Lista con los títulos de las columnas
+        anchos: Lista con los anchos de cada columna
+    """
     # Función auxiliar para truncar o rellenar una cadena al ancho especificado
     def formatear_celda(texto, ancho):
         texto = str(texto)
@@ -175,11 +271,18 @@ def imprimir_tabla(datos, titulos, anchos):
     # Imprimir línea final
     print(separador)
 
-
 def analizar_cadena(cadena):
+    """
+    Analiza una cadena de tokens separados por espacios.
     
+    Args:
+        cadena: String con tokens separados por espacios
+        
+    Returns:
+        Resultado del análisis
+    """
     tokens = cadena.strip().split()
-    analizador = AnalizadorSintacticoLL("tabla_sintactica.csv")  # <-- Agrega el nombre del archivo
+    analizador = AnalizadorSintacticoLL("tabla_sintactica.csv")
     resultado = analizador.analizar(tokens)
     
     # Imprimir resultado
@@ -196,8 +299,12 @@ def analizar_cadena(cadena):
     # Imprimir la tabla con los pasos
     imprimir_tabla(resultado['pasos'], titulos, anchos)
     
+    if resultado["graphviz"]:
+        print("\n=== ÁRBOL SINTÁCTICO (GRAPHVIZ) ===")
+        print(resultado["graphviz"])
+        print("\nPuede visualizar este árbol en: https://dreampuf.github.io/GraphvizOnline")
+    
     return resultado
-
 
 
 # Probar las cadenas solicitadas

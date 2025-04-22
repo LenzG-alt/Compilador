@@ -3,9 +3,6 @@ import csv
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ##
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = ##
 class Node:
-    """
-    Clase para representar un nodo en el árbol sintáctico.
-    """
     def __init__(self, label, is_terminal=False, value=None):
         self.label = label  # Etiqueta del nodo (no terminal o terminal)
         self.is_terminal = is_terminal  # Flag para indicar si es un terminal
@@ -14,14 +11,19 @@ class Node:
         self.node_id = None  # ID único para el nodo en el gráfico
 
     def add_child(self, node):
-        """Añade un hijo al nodo."""
         self.children.append(node)
         return node
+        
+    def agregar_epsilon(self):
+      
+        if not self.children and not self.is_terminal:
+            epsilon_node = Node("ε", is_terminal=True, value="ε")
+            self.add_child(epsilon_node)
+        else:
+            for child in self.children:
+                child.agregar_epsilon()
 
     def to_graphviz(self):
-        """
-        Genera el código Graphviz para visualizar el árbol.
-        """
         nodes = []
         edges = []
         
@@ -78,15 +80,6 @@ class AnalizadorSintacticoLL:
         return tabla
 
     def analizar(self, tokens):
-        """
-        Analiza una lista de tokens utilizando el algoritmo LL y construye un árbol sintáctico.
-        
-        Args:
-            tokens: Lista de tokens a analizar
-            
-        Returns:
-            Un diccionario con el resultado del análisis, mensaje, pasos y el árbol sintáctico
-        """
         # Agregar el símbolo de fin de entrada
         tokens.append('$')
         
@@ -109,7 +102,7 @@ class AnalizadorSintacticoLL:
             accion = ""
             
             if X == token_actual:  # Si coincide con el token actual
-                accion = f"Emparejar {X}"
+                accion = f"Terminal {X}"
                 pila.pop()         # Eliminar de la pila
                 
                 # Si el nodo no es None, marcarlo como terminal y asignar el valor
@@ -120,6 +113,7 @@ class AnalizadorSintacticoLL:
                 indice += 1        # Avanzar al siguiente token
                 if indice < len(tokens):
                     token_actual = tokens[indice]
+                    
             elif (X, token_actual) in self.tabla:  # Si hay una regla de producción
                 produccion = self.tabla[(X, token_actual)]
                 produccion_str = ' '.join(produccion) if produccion != ['ε'] else 'ε'
@@ -164,6 +158,7 @@ class AnalizadorSintacticoLL:
             pila_actual = ' '.join([p[0] for p in pila])
             pasos.append((paso_num, pila_actual, entrada_restante, "ACEPTAR"))
             
+            root.agregar_epsilon()
             # Generar el código Graphviz
             graphviz_code = root.to_graphviz()
             
@@ -188,16 +183,6 @@ class AnalizadorSintacticoLL:
             }
 
 def analizar_desde_archivo(archivo_tokens, archivo_tabla):
-    """
-    Analiza varias líneas desde un archivo de tokens, utilizando una tabla sintáctica.
-
-    Args:
-        archivo_tokens: Ruta al archivo que contiene cadenas de tokens (una por línea).
-        archivo_tabla: Ruta al archivo CSV con la tabla sintáctica.
-
-    Returns:
-        Lista de resultados del análisis por cada línea.
-    """
     with open(archivo_tokens, 'r') as f:
         lineas = f.readlines()
 
@@ -233,14 +218,6 @@ def analizar_desde_archivo(archivo_tokens, archivo_tabla):
 
 
 def imprimir_tabla(datos, titulos, anchos):
-    """
-    Imprime una tabla en la consola sin usar librerías externas.
-    
-    Args:
-        datos: Lista de tuplas con los datos
-        titulos: Lista con los títulos de las columnas
-        anchos: Lista con los anchos de cada columna
-    """
     # Función auxiliar para truncar o rellenar una cadena al ancho especificado
     def formatear_celda(texto, ancho):
         texto = str(texto)
@@ -272,15 +249,6 @@ def imprimir_tabla(datos, titulos, anchos):
     print(separador)
 
 def analizar_cadena(cadena):
-    """
-    Analiza una cadena de tokens separados por espacios.
-    
-    Args:
-        cadena: String con tokens separados por espacios
-        
-    Returns:
-        Resultado del análisis
-    """
     tokens = cadena.strip().split()
     analizador = AnalizadorSintacticoLL("tabla_sintactica.csv")
     resultado = analizador.analizar(tokens)
@@ -300,9 +268,8 @@ def analizar_cadena(cadena):
     imprimir_tabla(resultado['pasos'], titulos, anchos)
     
     if resultado["graphviz"]:
-        print("\n=== ÁRBOL SINTÁCTICO (GRAPHVIZ) ===")
+        print("\n=== ÁRBOL SINTÁCTICO ===")
         print(resultado["graphviz"])
-        print("\nPuede visualizar este árbol en: https://dreampuf.github.io/GraphvizOnline")
     
     return resultado
 
@@ -311,6 +278,7 @@ def analizar_cadena(cadena):
 print("\n--- EJEMPLO 1 ---")
 analizar_cadena("int + int")
 
+'''
 print("\n--- EJEMPLO 2 ---")
 analizar_cadena("int * int")
 
@@ -320,3 +288,4 @@ analizar_cadena("int + + int")
 # Prueba desde archivo
 print("\n--- PRUEBA DESDE ARCHIVO ---")
 analizar_desde_archivo("tokens.txt", "tabla_sintactica.csv")
+'''

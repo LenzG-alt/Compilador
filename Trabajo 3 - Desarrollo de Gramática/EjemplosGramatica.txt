@@ -1,0 +1,35 @@
+// Ejemplo 1: Hola Mundo
+void main() {
+    print("Hola Mundo");
+}
+
+
+
+// Ejemplo 2: Bucles Anidados
+void main() {
+    int i, j;
+    for (i = 1; i < 5; i = i + 1) {
+        for (j = 1; j < 5; j = j + 1) {
+            print(i);
+            print(j);
+        }
+    }
+}
+
+
+
+
+// Ejemplo 3: Funciones / Recursividad
+int factorial(int n) {
+    if (n < 2) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+void main() {
+    int num = 5;
+    int result = factorial(num);
+    print(result);
+}

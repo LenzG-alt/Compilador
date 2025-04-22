@@ -1,0 +1,33 @@
+<programa> ::= <funciones> <main>
+<funciones> ::= <funcion> <funciones> | ''
+<funcion> ::= <tipo> id ( <parametros> ) { <instrucciones> }
+<main> ::= void main() { <instrucciones> }
+<parametros> ::= <parametro> <parametros_rest> | ''
+<parametros_rest> ::= , <parametro> <parametros_rest> | ''
+<parametro> ::= <tipo> id
+<instrucciones> ::= <instruccion> <instrucciones> | ''
+<instruccion> ::= <declaracion> | <asignacion> | <if> | <while> | <for> | <print> | <return>
+<declaracion> ::= <tipo> id = <exp> ; | <tipo> id ;
+<asignacion> ::= id = <exp> ;
+<if> ::= if ( <exp> ) { <instrucciones> } <else>
+<else> ::= else { <instrucciones> } | ''
+<while> ::= while ( <exp> ) { <instrucciones> }
+<for> ::= for ( <instruccion> <exp> ; <asignacion> ) { <instrucciones> }
+<print> ::= print ( <exp> ) ;
+<return> ::= return <exp> ; | return ;
+<tipo> ::= int | float | bool | void
+<exp> ::= <E>
+<E> ::= <C> <E'>
+<E'> ::= || <C> <E'> | ''
+<C> ::= <R> <C'>
+<C'> ::= & <R> <C'> | ''
+<R> ::= <T> <R'>
+<R'> ::= = <T> <R'> | < <T> <R'> | > <T> <R'> | >= <T> <R'> | <= <T> <R'> | == <T> <R'> | != <T> <R'> | ''
+<T> ::= <F> <T'>
+<T'> ::= + <F> <T'> | - <F> <T'> | ''
+<F> ::= <A> <F'>
+<F'> ::= * <A> <F'> | / <A> <F'> | % <A> <F'> | ''
+<A> ::= ( <L> ) | ( ) | id <B> | num | true | false
+<L> ::= <E> <L'>
+<L'> ::= , <E> <L'> | ''
+<B> ::= ( <L> ) | ''

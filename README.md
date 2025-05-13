@@ -5,7 +5,9 @@ EVOLA
 
 ## **Curso**
 Compiladores
-https://onlinegdb.com/2n14CNylA
+
+tabla: https://onlinegdb.com/2n14CNylA
+analizador: https://onlinegdb.com/D7nhMLszae
 
 ## **Nombre del docente**
 Vicente Enrique Machaca Arceda

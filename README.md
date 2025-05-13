@@ -25,7 +25,7 @@ Evola es un lenguaje de programación que combina la simplicidad de Python, la e
 | **Expresión Regular**         | **Token**                         | **Descripción**                                |
 |---------------|--------------------------------------------|--------------------------------------------|
 | **variable float** | `[0-9]+ . [0-9]*`                          | Variables decimales                        |
-| **variable bool** | `[0|1]`                                    | Variables de verdadero/falso               |
+| **variable bool** | `[0-1]`                                    | Variables de verdadero/falso               |
 | **variable int**  | `[1-9]+`                                   | Variables de enteros                       |
 | **Literal**       | `“.”`                                      | Variable string                            |
 | **Id**            | `[a-z, A-Z] ([a-z, A-Z] | [0-9])*`         | Ids que se pueden colocar para darles un valor |

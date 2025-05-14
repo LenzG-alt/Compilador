@@ -1,0 +1,84 @@
+programa -> funciones mainF
+
+funciones -> funcion funciones
+funciones -> ''
+
+funcion -> tipo Id ( parametros ) bloque
+parametros -> parametro parametros_rest 
+parametros -> ''
+parametros_rest -> , parametro parametros_rest 
+parametros_rest -> ''
+parametro -> tipo Id
+
+mainF -> void main ( ) bloque
+bloque -> { instrucciones }
+
+instrucciones -> argumento instrucciones
+instrucciones -> ''
+argumento -> If
+argumento -> While
+argumento -> For
+argumento -> Return
+argumento -> Print
+
+argumento -> tipo Id declaracion
+argumento -> asignacion
+asignacion -> Id = exp
+declaracion -> = exp ;
+declaracion -> ;
+
+If -> if ( exp ) bloque Else
+Else -> else bloque
+Else-> ''
+While -> while ( exp ) bloque
+For -> for ( asignacion ; exp ; asignacion ) bloque
+
+Return -> return exp' ;
+exp' -> exp
+exp' -> ''
+Print -> print ( exp ) ;
+
+tipo -> int
+tipo -> float
+tipo -> bool
+tipo -> string
+
+exp -> E
+E -> C E'
+E' -> || C E' 
+E' -> ''
+C -> R C'
+C' -> & R C' 
+C' -> ''
+R -> T R'
+R' -> = T R' 
+R' -> < T R' 
+R' -> > T R' 
+R' -> <= T R' 
+R' -> >= T R' 
+R' -> == T R' 
+R' -> != T R' 
+R' -> ''
+T -> F T'
+T' -> + F T' 
+T' -> - F T' 
+T' -> ''
+F -> A F'
+F' -> * A F' 
+F' -> / A F' 
+F' -> % A F' 
+F' -> ''
+A -> ( L ) 
+A -> id B
+A -> num
+A -> true 
+A -> false
+
+L -> E L'
+L' -> , E L' 
+L' -> ''
+L -> ''
+B -> ( L ) 
+B -> ''
+
+Id -> id

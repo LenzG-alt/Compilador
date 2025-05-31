@@ -23,18 +23,20 @@ argumento -> Print
 
 argumento -> tipo Id declaracion
 argumento -> asignacion
-asignacion -> Id = exp
-declaracion -> = exp 
+asignacion -> Id = exp ;
+declaracion -> = exp ;
+declaracion -> ;
 
 If -> if ( exp ) bloque Else
 Else -> else bloque
 Else-> ''
 While -> while ( exp ) bloque
-For -> for ( asignacion , exp , asignacion ) bloque
+For -> for ( asignacion ; exp ; asignacion ) bloque
 
-Return -> return expo 
-expo -> exp
-Print -> print ( exp ) 
+Return -> return exp2 ;
+exp2 -> exp
+exp2 -> ''
+Print -> print ( exp ) ;
 
 tipo -> int
 tipo -> float
@@ -50,12 +52,12 @@ Co -> & R Co
 Co -> ''
 R -> T Ro
 Ro -> = T Ro 
-Ro -> < T Ro 
-Ro -> > T Ro 
+Ro -> < T Ro
+Ro -> > T Ro
 Ro -> <= T Ro 
-Ro -> >= T Ro 
-Ro -> == T Ro 
-Ro -> != T Ro 
+Ro -> >= T Ro
+Ro -> == T Ro
+Ro -> != T Ro
 Ro -> ''
 T -> F To
 To -> + F To 

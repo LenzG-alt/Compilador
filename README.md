@@ -10,6 +10,8 @@ tabla: https://onlinegdb.com/2n14CNylA
 analizador: https://onlinegdb.com/D7nhMLszae
 Ultimo: https://onlinegdb.com/asfWw5yRB
 
+Hack: https://onlinegdb.com/M07AYnfEm
+
 ## **Nombre del docente**
 Vicente Enrique Machaca Arceda
 

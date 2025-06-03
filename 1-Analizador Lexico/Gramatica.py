@@ -151,32 +151,37 @@ def p_Print(p):
 
 # Aquí deberías continuar agregando las reglas para exp, E, Eo, C, Co, R, etc.
 # ...
-
 def p_exp(p):
     'exp : E'
-    pass
+    p[0] = p[1]
 
 def p_E(p):
     'E : C Eo'
-    pass
+    p[0] = TreeNode('E', [p[1], p[2]])
 
 def p_Eo(p):
     '''Eo : OROR C Eo
           | '''
-    pass
+    if len(p) == 4:
+        p[0] = TreeNode('OROR', [p[2], p[3]])
+    else:
+        p[0] = TreeNode('Eo (vacío)')
 
 def p_C(p):
     'C : R Co'
-    pass
+    p[0] = TreeNode('C', [p[1], p[2]])
 
 def p_Co(p):
     '''Co : AND R Co
           | '''
-    pass
+    if len(p) == 4:
+        p[0] = TreeNode('AND', [p[2], p[3]])
+    else:
+        p[0] = TreeNode('Co (vacío)')
 
 def p_R(p):
     'R : T Ro'
-    pass
+    p[0] = TreeNode('R', [p[1], p[2]])
 
 def p_Ro(p):
     '''Ro : EQ T Ro
@@ -187,28 +192,37 @@ def p_Ro(p):
           | EQEQ T Ro
           | NE T Ro
           | '''
-    pass
+    if len(p) == 4:
+        p[0] = TreeNode(p[1], [p[2], p[3]])
+    else:
+        p[0] = TreeNode('Ro (vacío)')
 
 def p_T(p):
     'T : F To'
-    pass
+    p[0] = TreeNode('T', [p[1], p[2]])
 
 def p_To(p):
     '''To : PLUS F To
           | MINUS F To
           | '''
-    pass
+    if len(p) == 4:
+        p[0] = TreeNode(p[1], [p[2], p[3]])
+    else:
+        p[0] = TreeNode('To (vacío)')
 
 def p_F(p):
     'F : A Fo'
-    pass
+    p[0] = TreeNode('F', [p[1], p[2]])
 
 def p_Fo(p):
     '''Fo : TIMES A Fo
           | DIVIDE A Fo
           | MOD A Fo
           | '''
-    pass
+    if len(p) == 4:
+        p[0] = TreeNode(p[1], [p[2], p[3]])
+    else:
+        p[0] = TreeNode('Fo (vacío)')
 
 def p_A(p):
     '''A : LPAREN L RPAREN
@@ -216,23 +230,36 @@ def p_A(p):
          | NUM
          | TRUE
          | FALSE'''
-    pass
+    if p[1] == '(':
+        p[0] = TreeNode('()', [p[2]])
+    elif p.slice[1].type == 'ID':
+        p[0] = TreeNode('ID', [TreeNode(p[1]), p[2]])
+    else:
+        p[0] = TreeNode(str(p[1]))
 
 def p_L(p):
     '''L : E Lo
          | '''
-    pass
+    if len(p) == 3:
+        p[0] = TreeNode('L', [p[1], p[2]])
+    else:
+        p[0] = TreeNode('L (vacío)')
 
 def p_Lo(p):
     '''Lo : COMMA E Lo
           | '''
-    pass
+    if len(p) == 4:
+        p[0] = TreeNode(',', [p[2], p[3]])
+    else:
+        p[0] = TreeNode('Lo (vacío)')
 
 def p_B(p):
     '''B : LPAREN L RPAREN
          | '''
-    pass
-
+    if len(p) == 4:
+        p[0] = TreeNode('B', [p[2]])
+    else:
+        p[0] = TreeNode('B (vacío)')
 
 def p_error(p):
     if p:

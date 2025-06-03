@@ -8,14 +8,6 @@ codigo = '''
 void main() {
     int x = 10;
     float y = 5.5;
-    if (x > 0) {
-        print(x);
-    } else {
-        print(y);
-    }
-    for (x = 0; x < 5; x = x + 1) {
-        print(x);
-    }
     return;
 }
 '''

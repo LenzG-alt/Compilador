@@ -10,7 +10,7 @@ tokens = (
     'in', 'out',
     'void', 'main', 'print',
     'if', 'else', 'false', 'true',
-    'INT', 'float', 'bool', 'string',
+    'int', 'float', 'bool', 'string',
     'NUMBER', 'new_line', 'variable_float', 'variable_bool', 'variable_int', 'literal', 'Id'
 )
 
@@ -96,9 +96,9 @@ def t_true(t):
     t.type = 'true'
     return t
 
-def t_INT(t):
+def t_int(t):
     r'\bint\b'
-    t.type = 'INT'
+    t.type = 'int'
     return t
 
 
@@ -118,6 +118,7 @@ def t_string(t):
     r'\bstring\b'
     t.type = 'string'
     return t
+
 # Nuevos tokens
 t_variable_float = r'[0-9]+\.[0-9]*'  # Números decimales (flotantes)
 t_variable_bool = r'[01]'  # 0 o 1, valores booleanos
@@ -162,7 +163,7 @@ def escribir_tokens_en_archivo(tokens, archivo_salida):
             f.write(f"Token: {token.type}, Valor: {token.value}, Línea: {token.lineno}\n")
 
 # Leer los datos desde el archivo 'data.txt'
-data = leer_archivo("c:/Users/arapa/Documents/Compilador/data.txt")
+data = leer_archivo("data.txt")
 #data = leer_archivo("data.txt")
 #data = leer_archivo("ejem1.txt")
 #data = leer_archivo("ejem2.txt")

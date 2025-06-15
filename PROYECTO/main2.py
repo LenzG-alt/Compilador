@@ -1,7 +1,12 @@
 import Lexer
 import Gramatica
 from graphviz import Digraph
-import uuid
+from TreeNode import TreeNode
+import os
+
+# Crear la carpeta si no existe
+output_dir = "salida"
+os.makedirs(output_dir, exist_ok=True)
 
 # === Código de prueba ===
 codigo = '''
@@ -12,21 +17,6 @@ void main() {
 }
 '''
 
-# === Árbol de derivación ===
-class TreeNode:
-    def __init__(self, label, children=None):
-        self.label = label
-        self.children = children or []
-        self.id = str(uuid.uuid4()).replace('-', '')
-
-    def add_child(self, node):
-        self.children.append(node)
-
-    def render(self, dot):
-        dot.node(self.id, self.label)
-        for child in self.children:
-            dot.edge(self.id, child.id)
-            child.render(dot)
 
 # Reemplazamos el parser para devolver un árbol
 Gramatica.build_parser(TreeNode)
@@ -36,8 +26,15 @@ resultado = Gramatica.parser.parse(codigo)
 dot = Digraph()
 if resultado:
     resultado.render(dot)
-    with open("arbol.dot", "w") as f:
+    #with open("arbol.dot", "w") as f:
+    #    f.write(dot.source)
+    #print("\nÁrbol generado en 'arbol.dot'. Puedes visualizarlo en: https://dreampuf.github.io/GraphvizOnline")
+    
+    output_path = os.path.join(output_dir, "arbol.dot")
+    with open(output_path, "w") as f:
         f.write(dot.source)
-    print("\nÁrbol generado en 'arbol.dot'. Puedes visualizarlo en: https://dreampuf.github.io/GraphvizOnline")
+    print(f"\nÁrbol generado en '{output_path}'. Puedes visualizarlo en: https://dreampuf.github.io/GraphvizOnline")
+    print("\nAnálisis completado. Archivos generados en la carpeta 'salida'.")
+    
 else:
     print("\nNo se generó árbol: error de análisis sintáctico.")

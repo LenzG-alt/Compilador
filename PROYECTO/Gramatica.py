@@ -1,31 +1,7 @@
 import ply.yacc as yacc
 from Lexer import tokens
 
-class TreeNode:
-    def __init__(self, name, children=None):
-        self.name = name
-        self.children = children or []
-
-    def to_dot(self):
-        counter = [0]
-        lines = ["digraph G {"]
-
-        def add_node(node, parent_id=None):
-            node_id = f"node{counter[0]}"
-            lines.append(f'{node_id} [label="{node.name}"]')
-            current_id = node_id
-            counter[0] += 1
-            for child in node.children:
-                child_id = add_node(child, current_id)
-                lines.append(f"{current_id} -> {child_id}")
-            return current_id
-
-        add_node(self)
-        lines.append("}")
-        return "\n".join(lines)
-
-TreeNodeClass = TreeNode
-TreeNode = TreeNodeClass
+TreeNode = None  # Será inyectado por build_parser
 
 def p_programa(p):
     'programa : funciones mainF'
@@ -37,7 +13,7 @@ def p_funciones_rec(p):
 
 def p_funciones_empty(p):
     'funciones :'
-    p[0] = TreeNode('funciones (vacío)')
+    p[0] = TreeNode('funciones', [TreeNode('ε')])
 
 def p_funcion(p):
     'funcion : tipo ID LPAREN parametros RPAREN bloque'
@@ -49,7 +25,7 @@ def p_parametros(p):
 
 def p_parametros_empty(p):
     'parametros :'
-    p[0] = TreeNode('parametros (vacío)')
+    p[0] = TreeNode('parametros', [TreeNode('ε')])
 
 def p_parametros_rest(p):
     'parametros_rest : COMMA parametro parametros_rest'
@@ -57,7 +33,7 @@ def p_parametros_rest(p):
 
 def p_parametros_rest_empty(p):
     'parametros_rest :'
-    p[0] = TreeNode('parametros_rest (vacío)')
+    p[0] = TreeNode('parametros_rest', [TreeNode('ε')])
 
 def p_parametro(p):
     'parametro : tipo ID'
@@ -84,7 +60,7 @@ def p_instrucciones(p):
 
 def p_instrucciones_empty(p):
     'instrucciones :'
-    p[0] = TreeNode('instrucciones (vacío)')
+    p[0] = TreeNode('instrucciones', [TreeNode('ε')])
 
 def p_argumento(p):
     '''argumento : If
@@ -103,11 +79,11 @@ def p_argumento(p):
 
 def p_asignacion(p):
     'asignacion : ID EQUALS exp SEMI'
-    p[0] = TreeNode('asignacion', [TreeNode(p[1]), p[3]])
+    p[0] = TreeNode('asignacion', [TreeNode(p[1]), TreeNode('='), p[3]])
 
 def p_declaracion_valor(p):
     'declaracion : EQUALS exp SEMI'
-    p[0] = TreeNode('= exp', [p[2]])
+    p[0] = TreeNode('declaracion', [TreeNode('='), p[2]])
 
 def p_declaracion_empty(p):
     'declaracion : SEMI'
@@ -123,7 +99,7 @@ def p_Else(p):
     if len(p) == 3:
         p[0] = TreeNode('else', [p[2]])
     else:
-        p[0] = TreeNode('else (vacío)')
+        p[0] = TreeNode('else', [TreeNode('ε')])
 
 def p_While(p):
     'While : WHILE LPAREN exp RPAREN bloque'
@@ -143,7 +119,7 @@ def p_exp2(p):
     if len(p) == 2:
         p[0] = TreeNode('exp2', [p[1]])
     else:
-        p[0] = TreeNode('exp2 (vacío)')
+        p[0] = TreeNode('exp2', [TreeNode('ε')])
 
 def p_Print(p):
     'Print : PRINT LPAREN exp RPAREN SEMI'
@@ -165,7 +141,7 @@ def p_Eo(p):
     if len(p) == 4:
         p[0] = TreeNode('OROR', [p[2], p[3]])
     else:
-        p[0] = TreeNode('Eo (vacío)')
+        p[0] = TreeNode('Eo', [TreeNode('ε')])
 
 def p_C(p):
     'C : R Co'
@@ -177,7 +153,7 @@ def p_Co(p):
     if len(p) == 4:
         p[0] = TreeNode('AND', [p[2], p[3]])
     else:
-        p[0] = TreeNode('Co (vacío)')
+        p[0] = TreeNode('Co', [TreeNode('ε')])
 
 def p_R(p):
     'R : T Ro'
@@ -195,7 +171,7 @@ def p_Ro(p):
     if len(p) == 4:
         p[0] = TreeNode(p[1], [p[2], p[3]])
     else:
-        p[0] = TreeNode('Ro (vacío)')
+        p[0] = TreeNode('Ro', [TreeNode('ε')])
 
 def p_T(p):
     'T : F To'
@@ -208,7 +184,7 @@ def p_To(p):
     if len(p) == 4:
         p[0] = TreeNode(p[1], [p[2], p[3]])
     else:
-        p[0] = TreeNode('To (vacío)')
+        p[0] = TreeNode('To', [TreeNode('ε')])
 
 def p_F(p):
     'F : A Fo'
@@ -222,7 +198,7 @@ def p_Fo(p):
     if len(p) == 4:
         p[0] = TreeNode(p[1], [p[2], p[3]])
     else:
-        p[0] = TreeNode('Fo (vacío)')
+        p[0] = TreeNode('Fo', [TreeNode('ε')])
 
 def p_A(p):
     '''A : LPAREN L RPAREN
@@ -243,7 +219,7 @@ def p_L(p):
     if len(p) == 3:
         p[0] = TreeNode('L', [p[1], p[2]])
     else:
-        p[0] = TreeNode('L (vacío)')
+        p[0] = TreeNode('L', [TreeNode('ε')])
 
 def p_Lo(p):
     '''Lo : COMMA E Lo
@@ -251,7 +227,7 @@ def p_Lo(p):
     if len(p) == 4:
         p[0] = TreeNode(',', [p[2], p[3]])
     else:
-        p[0] = TreeNode('Lo (vacío)')
+        p[0] = TreeNode('Lo', [TreeNode('ε')])
 
 def p_B(p):
     '''B : LPAREN L RPAREN
@@ -259,7 +235,7 @@ def p_B(p):
     if len(p) == 4:
         p[0] = TreeNode('B', [p[2]])
     else:
-        p[0] = TreeNode('B (vacío)')
+        p[0] = TreeNode('B', [TreeNode('ε')])
 
 def p_error(p):
     if p:
@@ -267,8 +243,13 @@ def p_error(p):
     else:
         print("Error de sintaxis: entrada incompleta o vacía")
 
+
+
 def build_parser(TreeNodeClass):
     global TreeNode
     TreeNode = TreeNodeClass
     global parser
-    parser = yacc.yacc()
+    #parser = yacc.yacc()
+    parser = yacc.yacc(outputdir="salida")
+
+    

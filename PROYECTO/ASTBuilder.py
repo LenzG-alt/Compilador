@@ -1,5 +1,5 @@
 import os
-from Parser import parser, lexer  # Asegúrate de importar lexer desde tu Parser.py
+from .Parser import parser, lexer  # Asegúrate de importar lexer desde tu Parser.py
 
 
 class ASTBuilder:
@@ -10,7 +10,8 @@ class ASTBuilder:
     def build_ast(self, input_code):
         """Construye el AST a partir del código de entrada"""
         try:
-            self.ast = parser.parse(input_code, lexer=lexer)
+            lexer.input(input_code) # Ensure lexer is reset with the current input
+            self.ast = parser.parse(lexer=lexer) # input_code is implicitly used by lexer
             return self.ast
         except Exception as e:
             print(f"Error al construir el AST: {str(e)}")
@@ -37,7 +38,18 @@ class ASTBuilder:
             })
         
         # Parse real
-        self.ast = parser.parse(input_code, lexer=lexer)
+        # Assuming lexer (the global one) state is managed correctly if trace_parse is called after build_ast
+        # or if debug_lexer (clone) should be used here too.
+        # For now, sticking to the request for build_ast, but applying same logic here.
+        # If lexer.input(input_code) was just called in build_ast, this parse might be problematic
+        # if it expects a fresh lexer or specific state.
+        # However, trace_parse has its own lexer.input(input_code) with debug_lexer.
+        # The original self.ast = parser.parse(input_code, lexer=lexer) in trace_parse
+        # likely intended to use the global lexer after it was set by a prior build_ast or similar.
+        # Let's assume it should use the global lexer which has been fed input_code.
+        # If trace_parse is independent, it should also call lexer.input(input_code) for the global lexer.
+        # Given build_ast now calls lexer.input(), this parse in trace_parse should also not pass input_code.
+        self.ast = parser.parse(lexer=lexer) # input_code is implicitly used by lexer
         return self.parse_trace
     
     def save_ast_to_file(self, filename='salida/ast.txt'):
@@ -138,7 +150,8 @@ def build_and_visualize_ast(input_code):
         """Construye el AST y valida los ámbitos"""
         try:
             # Construir AST como antes
-            self.ast = parser.parse(input_code, lexer=lexer)
+            lexer.input(input_code) # Added for consistency with build_ast modifications
+            self.ast = parser.parse(lexer=lexer) # Changed for consistency
             
             # Validar ámbitos
             self.scope_checker.validate_ast(self.ast)

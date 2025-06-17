@@ -1,0 +1,71 @@
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 11: Token inesperado 'print' de tipo 'PRINT'
+    print(z);
+    ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 11: Token inesperado 'print' de tipo 'PRINT'
+    print(z);
+    ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 11: Token inesperado 'print' de tipo 'PRINT'
+    print(z);
+    ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 11: Token inesperado 'print' de tipo 'PRINT'
+    print(z);
+    ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 11: Token inesperado 'print' de tipo 'PRINT'
+    print(z);
+    ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^
+
+Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
+void main() {
+     ^

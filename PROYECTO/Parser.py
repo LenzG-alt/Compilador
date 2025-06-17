@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from Lexer import tokens, lexer
+from .Lexer import tokens, lexer
 
 # Precedence rules for operators
 precedence = (
@@ -13,31 +13,45 @@ precedence = (
 
 def p_programa(p):
     '''programa : funciones'''
+    print(f"DEBUG: p_programa entered, p[1] from funciones is {p[1] if len(p) > 1 else 'N/A'}")
     p[0] = ('program', p[1])
 
 def p_funciones(p):
-    '''funciones : funcion funciones
-                 | empty'''
-    if len(p) == 3:
+    '''funciones : funcion_or_main funciones
+                 | funcion_or_main'''
+    print(f"DEBUG: p_funciones entered, len(p)={len(p)}")
+    if len(p) == 3: # funcion_or_main funciones
         p[0] = [p[1]] + p[2]
-    else:
-        p[0] = []
+        print(f"DEBUG: p_funciones (recursive) assigned p[0]=[{p[1]}] + {p[2]}")
+    else: # funcion_or_main (len(p) == 2)
+        p[0] = [p[1]]
+        print(f"DEBUG: p_funciones (base) assigned p[0]=[{p[1]}]")
 
-def p_funcion(p):
-    '''funcion : tipo ID funcion_rest
-               | MAIN LPAREN RPAREN bloque'''
-    if len(p) == 4:
-        p[0] = ('function', p[1], p[2], p[3])
-    else:
-        p[0] = ('main_function', p[4])
+def p_funcion_or_main(p):
+    '''funcion_or_main : regular_function
+                       | main_function_def'''
+    print(f"DEBUG: p_funcion_or_main entered, p[1] is {p[1]}")
+    p[0] = p[1] # Pass through the result
 
-def p_funcion_rest(p):
-    '''funcion_rest : inicializacion SEMI
-                    | LPAREN parametros RPAREN bloque'''
-    if len(p) == 3:
-        p[0] = ('var_declaration', p[1])
-    else:
-        p[0] = ('function_declaration', p[2], p[4])
+def p_regular_function(p):
+    '''regular_function : tipo ID LPAREN parametros RPAREN bloque'''
+    # This rule is for 'int suma(...)', 'float calc(...)', etc.
+    # It assumes MAIN token is handled by main_function_def and isn't a typical ID here.
+    print(f"DEBUG: p_regular_function for ID {p[2]} entered. tipo={p[1]}")
+    # p[1]=tipo, p[2]=ID, p[3]=LPAREN, p[4]=parametros, p[5]=RPAREN, p[6]=bloque
+    p[0] = ('function', p[1], p[2], p[4], p[6]) # AST: (type, name, params, block)
+    print(f"DEBUG: p_regular_function assigned p[0]={p[0]}")
+
+def p_main_function_def(p):
+    '''main_function_def : VOID MAIN LPAREN parametros RPAREN bloque'''
+    print(f"DEBUG: p_main_function_def entered.")
+    # p[1]=VOID, p[2]=MAIN, p[3]=LPAREN, p[4]=parametros, p[5]=RPAREN, p[6]=bloque
+    p[0] = ('main_function', p[4], p[6]) # AST: (params, block) void is implicit
+    print(f"DEBUG: p_main_function_def assigned p[0]={p[0]}")
+
+# Old p_funcion and p_funcion_rest are effectively removed by not being defined below.
+# Make sure p_tipo, p_parametros, p_bloque are still defined as they are used.
+# (They are defined later in the file, so they should be fine)
 
 def p_parametros(p):
     '''parametros : parametro parametros_rest
@@ -286,7 +300,7 @@ def p_lista_args_rest(p):
 
 def p_empty(p):
     'empty :'
-    pass
+    p[0] = None # Explicitly set p[0] for empty rules
 
 def p_error(p):
     if p:
@@ -305,4 +319,4 @@ def p_error(p):
         with open("salida/errores_sintacticos.txt", "a", encoding="utf-8") as error_file:
             error_file.write(f"{error_msg}\n")
 
-parser = yacc.yacc()
+parser = yacc.yacc(debug=True) # Removed errorlog and debuglog for now to ensure tool stability

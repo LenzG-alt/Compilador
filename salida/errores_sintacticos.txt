@@ -69,3 +69,11 @@ void main() {
 Error sintáctico en línea 7: Token inesperado 'main' de tipo 'MAIN'
 void main() {
      ^
+
+Error sintáctico en línea 4: Token inesperado '{' de tipo 'LBRACE'
+        {
+        ^
+
+Error sintáctico en línea 17: Token inesperado '(' de tipo 'LPAREN'
+        calcular(); // Error: calcular not defined
+                ^

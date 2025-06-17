@@ -138,47 +138,57 @@ class ScopeChecker:
             raise ValueError("AST no válido: debe comenzar con 'program'")
         
         # Primero registrar todas las funciones
-        for func in ast[1]:
-            if func[0] == 'function':
-                _, return_type, name, decl = func
-                if decl[0] == 'function_declaration':
-                    params = [(param[1], param[2]) for param in decl[1]]
-                    self.symbol_table.add_function(name, params, return_type)
-        
+        for func_node in ast[1]: # ast[1] is the list of functions
+            if func_node[0] == 'function': # ('function', type_str, name_str, params_list, block_node)
+                _, return_type, name, params_list, _ = func_node # block_node not needed for registration
+                # Transform params_list: [('param', p_type, p_name), ...] to [(p_type, p_name), ...]
+                extracted_params = [(param_node[1], param_node[2]) for param_node in params_list]
+                self.symbol_table.add_function(name, extracted_params, return_type)
+            elif func_node[0] == 'main_function': # ('main_function', params_list, block_node)
+                _, params_list, _ = func_node # block_node not needed for registration
+                extracted_params = [(param_node[1], param_node[2]) for param_node in params_list] # Assuming params_list structure is same
+                self.symbol_table.add_function('main', extracted_params, 'void') # Main implicitly void
+
         # Luego verificar los cuerpos de las funciones
-        self.check_functions(ast[1])
+        for func_node in ast[1]: # Iterate again to check bodies in new scopes
+            if func_node[0] == 'function':
+                self.check_function(func_node)
+            elif func_node[0] == 'main_function':
+                self.check_main_function(func_node)
         
         print("\n" + self.symbol_table.get_symbol_table_report())
         print("\n" + self.symbol_table.get_scope_history_report())
     
-    def check_functions(self, functions):
-        """Verifica las declaraciones de funciones"""
-        for func in functions:
-            if func[0] == 'function':
-                self.check_function(func)
-            elif func[0] == 'main_function':
-                self.check_main_function(func)
-    
-    def check_function(self, func):
-        _, return_type, name, decl = func
+    # check_functions method is removed as its logic is merged into check_program's second loop.
+
+    def check_function(self, func_node): # Receives ('function', type_str, name_str, params_list, block_node)
+        _, return_type, name, params_list, block_node = func_node
         
-        if decl[0] == 'function_declaration':
-            params = [(param[1], param[2]) for param in decl[1]]
-            
-            self.symbol_table.enter_scope()
-            
-            # Añadir parámetros como variables locales
-            for param_type, param_name in params:
-                self.symbol_table.add_variable(param_name, param_type)
-            
-            self.check_block(decl[2][1])
-            self.symbol_table.exit_scope()
-    
-    def check_main_function(self, func):
-        """Verifica la función main"""
-        _, block = func
         self.symbol_table.enter_scope()
-        self.check_block(block[1])
+
+        # Añadir parámetros como variables locales
+        # params_list is [('param', p_type, p_name), ...]
+        for param_node in params_list:
+            # param_node is ('param', p_type, p_name)
+            self.symbol_table.add_variable(param_node[2], param_node[1]) # name, type
+
+        # block_node is ('block', [statements])
+        self.check_block(block_node[1])
+        self.symbol_table.exit_scope()
+    
+    def check_main_function(self, func_node): # Receives ('main_function', params_list, block_node)
+        """Verifica la función main"""
+        _, params_list, block_node = func_node
+
+        self.symbol_table.enter_scope()
+
+        # params_list is [('param', p_type, p_name), ...]
+        for param_node in params_list:
+             # param_node is ('param', p_type, p_name)
+            self.symbol_table.add_variable(param_node[2], param_node[1]) # name, type
+
+        # block_node is ('block', [statements])
+        self.check_block(block_node[1])
         self.symbol_table.exit_scope()
     
     def check_block(self, statements):

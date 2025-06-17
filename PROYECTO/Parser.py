@@ -13,41 +13,37 @@ precedence = (
 
 def p_programa(p):
     '''programa : funciones'''
-    print(f"DEBUG: p_programa entered, p[1] from funciones is {p[1] if len(p) > 1 else 'N/A'}")
+    # print(f"DEBUG: p_programa entered, p[1] from funciones is {p[1] if len(p) > 1 else 'N/A'}") # Minimized for ScopeChecker test
     p[0] = ('program', p[1])
 
 def p_funciones(p):
     '''funciones : funcion_or_main funciones
                  | funcion_or_main'''
-    print(f"DEBUG: p_funciones entered, len(p)={len(p)}")
+    # print(f"DEBUG: p_funciones entered, len(p)={len(p)}") # Minimized for ScopeChecker test
     if len(p) == 3: # funcion_or_main funciones
         p[0] = [p[1]] + p[2]
-        print(f"DEBUG: p_funciones (recursive) assigned p[0]=[{p[1]}] + {p[2]}")
+        # print(f"DEBUG: p_funciones (recursive) assigned p[0]=[{p[1]}] + {p[2]}") # Minimized
     else: # funcion_or_main (len(p) == 2)
         p[0] = [p[1]]
-        print(f"DEBUG: p_funciones (base) assigned p[0]=[{p[1]}]")
+        # print(f"DEBUG: p_funciones (base) assigned p[0]=[{p[1]}]") # Minimized
 
 def p_funcion_or_main(p):
     '''funcion_or_main : regular_function
                        | main_function_def'''
-    print(f"DEBUG: p_funcion_or_main entered, p[1] is {p[1]}")
+    # print(f"DEBUG: p_funcion_or_main entered, p[1] is {p[1]}") # Minimized for ScopeChecker test
     p[0] = p[1] # Pass through the result
 
 def p_regular_function(p):
     '''regular_function : tipo ID LPAREN parametros RPAREN bloque'''
-    # This rule is for 'int suma(...)', 'float calc(...)', etc.
-    # It assumes MAIN token is handled by main_function_def and isn't a typical ID here.
-    print(f"DEBUG: p_regular_function for ID {p[2]} entered. tipo={p[1]}")
-    # p[1]=tipo, p[2]=ID, p[3]=LPAREN, p[4]=parametros, p[5]=RPAREN, p[6]=bloque
+    # print(f"DEBUG: p_regular_function for ID {p[2]} entered. tipo={p[1]}") # Minimized for ScopeChecker test
     p[0] = ('function', p[1], p[2], p[4], p[6]) # AST: (type, name, params, block)
-    print(f"DEBUG: p_regular_function assigned p[0]={p[0]}")
+    # print(f"DEBUG: p_regular_function assigned p[0]={p[0]}") # Minimized
 
 def p_main_function_def(p):
     '''main_function_def : VOID MAIN LPAREN parametros RPAREN bloque'''
-    print(f"DEBUG: p_main_function_def entered.")
-    # p[1]=VOID, p[2]=MAIN, p[3]=LPAREN, p[4]=parametros, p[5]=RPAREN, p[6]=bloque
+    # print(f"DEBUG: p_main_function_def entered.") # Minimized for ScopeChecker test
     p[0] = ('main_function', p[4], p[6]) # AST: (params, block) void is implicit
-    print(f"DEBUG: p_main_function_def assigned p[0]={p[0]}")
+    # print(f"DEBUG: p_main_function_def assigned p[0]={p[0]}") # Minimized
 
 # Old p_funcion and p_funcion_rest are effectively removed by not being defined below.
 # Make sure p_tipo, p_parametros, p_bloque are still defined as they are used.

@@ -4,12 +4,12 @@ Grammar
 
 Rule 0     S' -> programa
 Rule 1     programa -> funciones
-Rule 2     funciones -> funcion funciones
-Rule 3     funciones -> empty
-Rule 4     funcion -> tipo ID funcion_rest
-Rule 5     funcion -> MAIN LPAREN RPAREN bloque
-Rule 6     funcion_rest -> inicializacion SEMI
-Rule 7     funcion_rest -> LPAREN parametros RPAREN bloque
+Rule 2     funciones -> funcion_or_main funciones
+Rule 3     funciones -> funcion_or_main
+Rule 4     funcion_or_main -> regular_function
+Rule 5     funcion_or_main -> main_function_def
+Rule 6     regular_function -> tipo ID LPAREN parametros RPAREN bloque
+Rule 7     main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque
 Rule 8     parametros -> parametro parametros_rest
 Rule 9     parametros -> empty
 Rule 10    parametros_rest -> COMMA parametro parametros_rest
@@ -97,15 +97,15 @@ FLOAT_NUM            : 68
 FOR                  : 31
 GE                   : 54
 GT                   : 52
-ID                   : 4 12 23 26 66
+ID                   : 6 12 23 26 66
 IF                   : 27
 INT                  : 36
 INT_NUM              : 67
 LBRACE               : 13
 LE                   : 53
-LPAREN               : 5 7 27 30 31 35 65 72
+LPAREN               : 6 7 27 30 31 35 65 72
 LT                   : 51
-MAIN                 : 5
+MAIN                 : 7
 MINUS                : 58
 MOD                  : 63
 NE                   : 50
@@ -114,13 +114,13 @@ PLUS                 : 57
 PRINT                : 35
 RBRACE               : 13
 RETURN               : 32
-RPAREN               : 5 7 27 30 31 35 65 72
-SEMI                 : 6 16 17 31 31 32 35
+RPAREN               : 6 7 27 30 31 35 65 72
+SEMI                 : 16 17 31 31 32 35
 STRING               : 39
 STRING_LITERAL       : 69
 TIMES                : 61
 TRUE                 : 70
-VOID                 : 40
+VOID                 : 7 40
 WHILE                : 30
 error                : 
 
@@ -144,25 +144,26 @@ T                    : 48 49 50 51 52 53 54
 T_rest               : 56 57 58
 While                : 19
 asignacion           : 17 31 31
-bloque               : 5 7 27 28 30 31
+bloque               : 6 7 27 28 30 31
 declaracion          : 16
-empty                : 3 9 11 15 25 29 34 44 47 55 59 64 73 75 77
+empty                : 9 11 15 25 29 34 44 47 55 59 64 73 75 77
 exp                  : 24 26 27 30 31 33 35 65 74 76
 exp_opt              : 32
-funcion              : 2
-funcion_rest         : 4
+funcion_or_main      : 2 3
 funciones            : 1 2
-inicializacion       : 6 23
+inicializacion       : 23
 instruccion          : 14
 instrucciones        : 13 14
 lista_args           : 72
 lista_args_rest      : 74 76
 llamada_func         : 66
+main_function_def    : 5
 parametro            : 8 10
-parametros           : 7
+parametros           : 6 7
 parametros_rest      : 8 10
 programa             : 0
-tipo                 : 4 12 23
+regular_function     : 4
+tipo                 : 6 12 23
 
 Parsing method: LALR
 
@@ -170,30 +171,30 @@ state 0
 
     (0) S' -> . programa
     (1) programa -> . funciones
-    (2) funciones -> . funcion funciones
-    (3) funciones -> . empty
-    (4) funcion -> . tipo ID funcion_rest
-    (5) funcion -> . MAIN LPAREN RPAREN bloque
-    (78) empty -> .
+    (2) funciones -> . funcion_or_main funciones
+    (3) funciones -> . funcion_or_main
+    (4) funcion_or_main -> . regular_function
+    (5) funcion_or_main -> . main_function_def
+    (6) regular_function -> . tipo ID LPAREN parametros RPAREN bloque
+    (7) main_function_def -> . VOID MAIN LPAREN parametros RPAREN bloque
     (36) tipo -> . INT
     (37) tipo -> . FLOAT
     (38) tipo -> . BOOL
     (39) tipo -> . STRING
     (40) tipo -> . VOID
 
-    MAIN            shift and go to state 6
-    $end            reduce using rule 78 (empty -> .)
-    INT             shift and go to state 7
-    FLOAT           shift and go to state 8
-    BOOL            shift and go to state 9
-    STRING          shift and go to state 10
-    VOID            shift and go to state 11
+    VOID            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    BOOL            shift and go to state 10
+    STRING          shift and go to state 11
 
     programa                       shift and go to state 1
     funciones                      shift and go to state 2
-    funcion                        shift and go to state 3
-    empty                          shift and go to state 4
-    tipo                           shift and go to state 5
+    funcion_or_main                shift and go to state 3
+    regular_function               shift and go to state 4
+    main_function_def              shift and go to state 5
+    tipo                           shift and go to state 6
 
 state 1
 
@@ -210,141 +211,125 @@ state 2
 
 state 3
 
-    (2) funciones -> funcion . funciones
-    (2) funciones -> . funcion funciones
-    (3) funciones -> . empty
-    (4) funcion -> . tipo ID funcion_rest
-    (5) funcion -> . MAIN LPAREN RPAREN bloque
-    (78) empty -> .
+    (2) funciones -> funcion_or_main . funciones
+    (3) funciones -> funcion_or_main .
+    (2) funciones -> . funcion_or_main funciones
+    (3) funciones -> . funcion_or_main
+    (4) funcion_or_main -> . regular_function
+    (5) funcion_or_main -> . main_function_def
+    (6) regular_function -> . tipo ID LPAREN parametros RPAREN bloque
+    (7) main_function_def -> . VOID MAIN LPAREN parametros RPAREN bloque
     (36) tipo -> . INT
     (37) tipo -> . FLOAT
     (38) tipo -> . BOOL
     (39) tipo -> . STRING
     (40) tipo -> . VOID
 
-    MAIN            shift and go to state 6
-    $end            reduce using rule 78 (empty -> .)
-    INT             shift and go to state 7
-    FLOAT           shift and go to state 8
-    BOOL            shift and go to state 9
-    STRING          shift and go to state 10
-    VOID            shift and go to state 11
+    $end            reduce using rule 3 (funciones -> funcion_or_main .)
+    VOID            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    BOOL            shift and go to state 10
+    STRING          shift and go to state 11
 
-    funcion                        shift and go to state 3
+    funcion_or_main                shift and go to state 3
     funciones                      shift and go to state 12
-    empty                          shift and go to state 4
-    tipo                           shift and go to state 5
+    regular_function               shift and go to state 4
+    main_function_def              shift and go to state 5
+    tipo                           shift and go to state 6
 
 state 4
 
-    (3) funciones -> empty .
+    (4) funcion_or_main -> regular_function .
 
-    $end            reduce using rule 3 (funciones -> empty .)
+    VOID            reduce using rule 4 (funcion_or_main -> regular_function .)
+    INT             reduce using rule 4 (funcion_or_main -> regular_function .)
+    FLOAT           reduce using rule 4 (funcion_or_main -> regular_function .)
+    BOOL            reduce using rule 4 (funcion_or_main -> regular_function .)
+    STRING          reduce using rule 4 (funcion_or_main -> regular_function .)
+    $end            reduce using rule 4 (funcion_or_main -> regular_function .)
 
 
 state 5
 
-    (4) funcion -> tipo . ID funcion_rest
+    (5) funcion_or_main -> main_function_def .
 
-    ID              shift and go to state 13
+    VOID            reduce using rule 5 (funcion_or_main -> main_function_def .)
+    INT             reduce using rule 5 (funcion_or_main -> main_function_def .)
+    FLOAT           reduce using rule 5 (funcion_or_main -> main_function_def .)
+    BOOL            reduce using rule 5 (funcion_or_main -> main_function_def .)
+    STRING          reduce using rule 5 (funcion_or_main -> main_function_def .)
+    $end            reduce using rule 5 (funcion_or_main -> main_function_def .)
 
 
 state 6
 
-    (5) funcion -> MAIN . LPAREN RPAREN bloque
+    (6) regular_function -> tipo . ID LPAREN parametros RPAREN bloque
 
-    LPAREN          shift and go to state 14
+    ID              shift and go to state 13
 
 
 state 7
+
+    (7) main_function_def -> VOID . MAIN LPAREN parametros RPAREN bloque
+    (40) tipo -> VOID .
+
+    MAIN            shift and go to state 14
+    ID              reduce using rule 40 (tipo -> VOID .)
+
+
+state 8
 
     (36) tipo -> INT .
 
     ID              reduce using rule 36 (tipo -> INT .)
 
 
-state 8
+state 9
 
     (37) tipo -> FLOAT .
 
     ID              reduce using rule 37 (tipo -> FLOAT .)
 
 
-state 9
+state 10
 
     (38) tipo -> BOOL .
 
     ID              reduce using rule 38 (tipo -> BOOL .)
 
 
-state 10
+state 11
 
     (39) tipo -> STRING .
 
     ID              reduce using rule 39 (tipo -> STRING .)
 
 
-state 11
-
-    (40) tipo -> VOID .
-
-    ID              reduce using rule 40 (tipo -> VOID .)
-
-
 state 12
 
-    (2) funciones -> funcion funciones .
+    (2) funciones -> funcion_or_main funciones .
 
-    $end            reduce using rule 2 (funciones -> funcion funciones .)
+    $end            reduce using rule 2 (funciones -> funcion_or_main funciones .)
 
 
 state 13
 
-    (4) funcion -> tipo ID . funcion_rest
-    (6) funcion_rest -> . inicializacion SEMI
-    (7) funcion_rest -> . LPAREN parametros RPAREN bloque
-    (24) inicializacion -> . EQUALS exp
-    (25) inicializacion -> . empty
-    (78) empty -> .
+    (6) regular_function -> tipo ID . LPAREN parametros RPAREN bloque
 
-    LPAREN          shift and go to state 17
-    EQUALS          shift and go to state 18
-    SEMI            reduce using rule 78 (empty -> .)
+    LPAREN          shift and go to state 15
 
-    funcion_rest                   shift and go to state 15
-    inicializacion                 shift and go to state 16
-    empty                          shift and go to state 19
 
 state 14
 
-    (5) funcion -> MAIN LPAREN . RPAREN bloque
+    (7) main_function_def -> VOID MAIN . LPAREN parametros RPAREN bloque
 
-    RPAREN          shift and go to state 20
+    LPAREN          shift and go to state 16
 
 
 state 15
 
-    (4) funcion -> tipo ID funcion_rest .
-
-    MAIN            reduce using rule 4 (funcion -> tipo ID funcion_rest .)
-    INT             reduce using rule 4 (funcion -> tipo ID funcion_rest .)
-    FLOAT           reduce using rule 4 (funcion -> tipo ID funcion_rest .)
-    BOOL            reduce using rule 4 (funcion -> tipo ID funcion_rest .)
-    STRING          reduce using rule 4 (funcion -> tipo ID funcion_rest .)
-    VOID            reduce using rule 4 (funcion -> tipo ID funcion_rest .)
-    $end            reduce using rule 4 (funcion -> tipo ID funcion_rest .)
-
-
-state 16
-
-    (6) funcion_rest -> inicializacion . SEMI
-
-    SEMI            shift and go to state 21
-
-
-state 17
-
-    (7) funcion_rest -> LPAREN . parametros RPAREN bloque
+    (6) regular_function -> tipo ID LPAREN . parametros RPAREN bloque
     (8) parametros -> . parametro parametros_rest
     (9) parametros -> . empty
     (12) parametro -> . tipo ID
@@ -356,426 +341,162 @@ state 17
     (40) tipo -> . VOID
 
     RPAREN          reduce using rule 78 (empty -> .)
-    INT             shift and go to state 7
-    FLOAT           shift and go to state 8
-    BOOL            shift and go to state 9
-    STRING          shift and go to state 10
-    VOID            shift and go to state 11
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    BOOL            shift and go to state 10
+    STRING          shift and go to state 11
+    VOID            shift and go to state 21
+
+    tipo                           shift and go to state 17
+    parametros                     shift and go to state 18
+    parametro                      shift and go to state 19
+    empty                          shift and go to state 20
+
+state 16
+
+    (7) main_function_def -> VOID MAIN LPAREN . parametros RPAREN bloque
+    (8) parametros -> . parametro parametros_rest
+    (9) parametros -> . empty
+    (12) parametro -> . tipo ID
+    (78) empty -> .
+    (36) tipo -> . INT
+    (37) tipo -> . FLOAT
+    (38) tipo -> . BOOL
+    (39) tipo -> . STRING
+    (40) tipo -> . VOID
+
+    RPAREN          reduce using rule 78 (empty -> .)
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    BOOL            shift and go to state 10
+    STRING          shift and go to state 11
+    VOID            shift and go to state 21
 
     parametros                     shift and go to state 22
-    parametro                      shift and go to state 23
-    empty                          shift and go to state 24
-    tipo                           shift and go to state 25
+    parametro                      shift and go to state 19
+    empty                          shift and go to state 20
+    tipo                           shift and go to state 17
+
+state 17
+
+    (12) parametro -> tipo . ID
+
+    ID              shift and go to state 23
+
 
 state 18
 
-    (24) inicializacion -> EQUALS . exp
-    (41) exp -> . E
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
+    (6) regular_function -> tipo ID LPAREN parametros . RPAREN bloque
 
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
+    RPAREN          shift and go to state 24
 
-    exp                            shift and go to state 26
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
 
 state 19
-
-    (25) inicializacion -> empty .
-
-    SEMI            reduce using rule 25 (inicializacion -> empty .)
-
-
-state 20
-
-    (5) funcion -> MAIN LPAREN RPAREN . bloque
-    (13) bloque -> . LBRACE instrucciones RBRACE
-
-    LBRACE          shift and go to state 41
-
-    bloque                         shift and go to state 40
-
-state 21
-
-    (6) funcion_rest -> inicializacion SEMI .
-
-    MAIN            reduce using rule 6 (funcion_rest -> inicializacion SEMI .)
-    INT             reduce using rule 6 (funcion_rest -> inicializacion SEMI .)
-    FLOAT           reduce using rule 6 (funcion_rest -> inicializacion SEMI .)
-    BOOL            reduce using rule 6 (funcion_rest -> inicializacion SEMI .)
-    STRING          reduce using rule 6 (funcion_rest -> inicializacion SEMI .)
-    VOID            reduce using rule 6 (funcion_rest -> inicializacion SEMI .)
-    $end            reduce using rule 6 (funcion_rest -> inicializacion SEMI .)
-
-
-state 22
-
-    (7) funcion_rest -> LPAREN parametros . RPAREN bloque
-
-    RPAREN          shift and go to state 42
-
-
-state 23
 
     (8) parametros -> parametro . parametros_rest
     (10) parametros_rest -> . COMMA parametro parametros_rest
     (11) parametros_rest -> . empty
     (78) empty -> .
 
-    COMMA           shift and go to state 44
+    COMMA           shift and go to state 26
     RPAREN          reduce using rule 78 (empty -> .)
 
-    parametros_rest                shift and go to state 43
-    empty                          shift and go to state 45
+    parametros_rest                shift and go to state 25
+    empty                          shift and go to state 27
 
-state 24
+state 20
 
     (9) parametros -> empty .
 
     RPAREN          reduce using rule 9 (parametros -> empty .)
 
 
+state 21
+
+    (40) tipo -> VOID .
+
+    ID              reduce using rule 40 (tipo -> VOID .)
+
+
+state 22
+
+    (7) main_function_def -> VOID MAIN LPAREN parametros . RPAREN bloque
+
+    RPAREN          shift and go to state 28
+
+
+state 23
+
+    (12) parametro -> tipo ID .
+
+    COMMA           reduce using rule 12 (parametro -> tipo ID .)
+    RPAREN          reduce using rule 12 (parametro -> tipo ID .)
+
+
+state 24
+
+    (6) regular_function -> tipo ID LPAREN parametros RPAREN . bloque
+    (13) bloque -> . LBRACE instrucciones RBRACE
+
+    LBRACE          shift and go to state 30
+
+    bloque                         shift and go to state 29
+
 state 25
 
-    (12) parametro -> tipo . ID
+    (8) parametros -> parametro parametros_rest .
 
-    ID              shift and go to state 46
+    RPAREN          reduce using rule 8 (parametros -> parametro parametros_rest .)
 
 
 state 26
 
-    (24) inicializacion -> EQUALS exp .
+    (10) parametros_rest -> COMMA . parametro parametros_rest
+    (12) parametro -> . tipo ID
+    (36) tipo -> . INT
+    (37) tipo -> . FLOAT
+    (38) tipo -> . BOOL
+    (39) tipo -> . STRING
+    (40) tipo -> . VOID
 
-    SEMI            reduce using rule 24 (inicializacion -> EQUALS exp .)
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    BOOL            shift and go to state 10
+    STRING          shift and go to state 11
+    VOID            shift and go to state 21
 
+    parametro                      shift and go to state 31
+    tipo                           shift and go to state 17
 
 state 27
 
-    (41) exp -> E .
+    (11) parametros_rest -> empty .
 
-    SEMI            reduce using rule 41 (exp -> E .)
-    RPAREN          reduce using rule 41 (exp -> E .)
-    COMMA           reduce using rule 41 (exp -> E .)
+    RPAREN          reduce using rule 11 (parametros_rest -> empty .)
 
 
 state 28
 
-    (42) E -> C . E_rest
-    (43) E_rest -> . OR C E_rest
-    (44) E_rest -> . empty
-    (78) empty -> .
+    (7) main_function_def -> VOID MAIN LPAREN parametros RPAREN . bloque
+    (13) bloque -> . LBRACE instrucciones RBRACE
 
-    OR              shift and go to state 48
-    SEMI            reduce using rule 78 (empty -> .)
-    RPAREN          reduce using rule 78 (empty -> .)
-    COMMA           reduce using rule 78 (empty -> .)
+    LBRACE          shift and go to state 30
 
-    E_rest                         shift and go to state 47
-    empty                          shift and go to state 49
+    bloque                         shift and go to state 32
 
 state 29
 
-    (45) C -> R . C_rest
-    (46) C_rest -> . AND R C_rest
-    (47) C_rest -> . empty
-    (78) empty -> .
+    (6) regular_function -> tipo ID LPAREN parametros RPAREN bloque .
 
-    AND             shift and go to state 51
-    OR              reduce using rule 78 (empty -> .)
-    SEMI            reduce using rule 78 (empty -> .)
-    RPAREN          reduce using rule 78 (empty -> .)
-    COMMA           reduce using rule 78 (empty -> .)
+    VOID            reduce using rule 6 (regular_function -> tipo ID LPAREN parametros RPAREN bloque .)
+    INT             reduce using rule 6 (regular_function -> tipo ID LPAREN parametros RPAREN bloque .)
+    FLOAT           reduce using rule 6 (regular_function -> tipo ID LPAREN parametros RPAREN bloque .)
+    BOOL            reduce using rule 6 (regular_function -> tipo ID LPAREN parametros RPAREN bloque .)
+    STRING          reduce using rule 6 (regular_function -> tipo ID LPAREN parametros RPAREN bloque .)
+    $end            reduce using rule 6 (regular_function -> tipo ID LPAREN parametros RPAREN bloque .)
 
-    C_rest                         shift and go to state 50
-    empty                          shift and go to state 52
 
 state 30
-
-    (48) R -> T . R_rest
-    (49) R_rest -> . EQ T R_rest
-    (50) R_rest -> . NE T R_rest
-    (51) R_rest -> . LT T R_rest
-    (52) R_rest -> . GT T R_rest
-    (53) R_rest -> . LE T R_rest
-    (54) R_rest -> . GE T R_rest
-    (55) R_rest -> . empty
-    (78) empty -> .
-
-    EQ              shift and go to state 54
-    NE              shift and go to state 55
-    LT              shift and go to state 56
-    GT              shift and go to state 57
-    LE              shift and go to state 58
-    GE              shift and go to state 59
-    AND             reduce using rule 78 (empty -> .)
-    OR              reduce using rule 78 (empty -> .)
-    SEMI            reduce using rule 78 (empty -> .)
-    RPAREN          reduce using rule 78 (empty -> .)
-    COMMA           reduce using rule 78 (empty -> .)
-
-    R_rest                         shift and go to state 53
-    empty                          shift and go to state 60
-
-state 31
-
-    (56) T -> F . T_rest
-    (57) T_rest -> . PLUS F T_rest
-    (58) T_rest -> . MINUS F T_rest
-    (59) T_rest -> . empty
-    (78) empty -> .
-
-    PLUS            shift and go to state 62
-    MINUS           shift and go to state 63
-    EQ              reduce using rule 78 (empty -> .)
-    NE              reduce using rule 78 (empty -> .)
-    LT              reduce using rule 78 (empty -> .)
-    GT              reduce using rule 78 (empty -> .)
-    LE              reduce using rule 78 (empty -> .)
-    GE              reduce using rule 78 (empty -> .)
-    AND             reduce using rule 78 (empty -> .)
-    OR              reduce using rule 78 (empty -> .)
-    SEMI            reduce using rule 78 (empty -> .)
-    RPAREN          reduce using rule 78 (empty -> .)
-    COMMA           reduce using rule 78 (empty -> .)
-
-    T_rest                         shift and go to state 61
-    empty                          shift and go to state 64
-
-state 32
-
-    (60) F -> A . F_rest
-    (61) F_rest -> . TIMES A F_rest
-    (62) F_rest -> . DIVIDE A F_rest
-    (63) F_rest -> . MOD A F_rest
-    (64) F_rest -> . empty
-    (78) empty -> .
-
-    TIMES           shift and go to state 66
-    DIVIDE          shift and go to state 67
-    MOD             shift and go to state 68
-    PLUS            reduce using rule 78 (empty -> .)
-    MINUS           reduce using rule 78 (empty -> .)
-    EQ              reduce using rule 78 (empty -> .)
-    NE              reduce using rule 78 (empty -> .)
-    LT              reduce using rule 78 (empty -> .)
-    GT              reduce using rule 78 (empty -> .)
-    LE              reduce using rule 78 (empty -> .)
-    GE              reduce using rule 78 (empty -> .)
-    AND             reduce using rule 78 (empty -> .)
-    OR              reduce using rule 78 (empty -> .)
-    SEMI            reduce using rule 78 (empty -> .)
-    RPAREN          reduce using rule 78 (empty -> .)
-    COMMA           reduce using rule 78 (empty -> .)
-
-    F_rest                         shift and go to state 65
-    empty                          shift and go to state 69
-
-state 33
-
-    (65) A -> LPAREN . exp RPAREN
-    (41) exp -> . E
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    exp                            shift and go to state 70
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 34
-
-    (66) A -> ID . llamada_func
-    (72) llamada_func -> . LPAREN lista_args RPAREN
-    (73) llamada_func -> . empty
-    (78) empty -> .
-
-    LPAREN          shift and go to state 72
-    TIMES           reduce using rule 78 (empty -> .)
-    DIVIDE          reduce using rule 78 (empty -> .)
-    MOD             reduce using rule 78 (empty -> .)
-    PLUS            reduce using rule 78 (empty -> .)
-    MINUS           reduce using rule 78 (empty -> .)
-    EQ              reduce using rule 78 (empty -> .)
-    NE              reduce using rule 78 (empty -> .)
-    LT              reduce using rule 78 (empty -> .)
-    GT              reduce using rule 78 (empty -> .)
-    LE              reduce using rule 78 (empty -> .)
-    GE              reduce using rule 78 (empty -> .)
-    AND             reduce using rule 78 (empty -> .)
-    OR              reduce using rule 78 (empty -> .)
-    SEMI            reduce using rule 78 (empty -> .)
-    RPAREN          reduce using rule 78 (empty -> .)
-    COMMA           reduce using rule 78 (empty -> .)
-
-    llamada_func                   shift and go to state 71
-    empty                          shift and go to state 73
-
-state 35
-
-    (67) A -> INT_NUM .
-
-    TIMES           reduce using rule 67 (A -> INT_NUM .)
-    DIVIDE          reduce using rule 67 (A -> INT_NUM .)
-    MOD             reduce using rule 67 (A -> INT_NUM .)
-    PLUS            reduce using rule 67 (A -> INT_NUM .)
-    MINUS           reduce using rule 67 (A -> INT_NUM .)
-    EQ              reduce using rule 67 (A -> INT_NUM .)
-    NE              reduce using rule 67 (A -> INT_NUM .)
-    LT              reduce using rule 67 (A -> INT_NUM .)
-    GT              reduce using rule 67 (A -> INT_NUM .)
-    LE              reduce using rule 67 (A -> INT_NUM .)
-    GE              reduce using rule 67 (A -> INT_NUM .)
-    AND             reduce using rule 67 (A -> INT_NUM .)
-    OR              reduce using rule 67 (A -> INT_NUM .)
-    SEMI            reduce using rule 67 (A -> INT_NUM .)
-    RPAREN          reduce using rule 67 (A -> INT_NUM .)
-    COMMA           reduce using rule 67 (A -> INT_NUM .)
-
-
-state 36
-
-    (68) A -> FLOAT_NUM .
-
-    TIMES           reduce using rule 68 (A -> FLOAT_NUM .)
-    DIVIDE          reduce using rule 68 (A -> FLOAT_NUM .)
-    MOD             reduce using rule 68 (A -> FLOAT_NUM .)
-    PLUS            reduce using rule 68 (A -> FLOAT_NUM .)
-    MINUS           reduce using rule 68 (A -> FLOAT_NUM .)
-    EQ              reduce using rule 68 (A -> FLOAT_NUM .)
-    NE              reduce using rule 68 (A -> FLOAT_NUM .)
-    LT              reduce using rule 68 (A -> FLOAT_NUM .)
-    GT              reduce using rule 68 (A -> FLOAT_NUM .)
-    LE              reduce using rule 68 (A -> FLOAT_NUM .)
-    GE              reduce using rule 68 (A -> FLOAT_NUM .)
-    AND             reduce using rule 68 (A -> FLOAT_NUM .)
-    OR              reduce using rule 68 (A -> FLOAT_NUM .)
-    SEMI            reduce using rule 68 (A -> FLOAT_NUM .)
-    RPAREN          reduce using rule 68 (A -> FLOAT_NUM .)
-    COMMA           reduce using rule 68 (A -> FLOAT_NUM .)
-
-
-state 37
-
-    (69) A -> STRING_LITERAL .
-
-    TIMES           reduce using rule 69 (A -> STRING_LITERAL .)
-    DIVIDE          reduce using rule 69 (A -> STRING_LITERAL .)
-    MOD             reduce using rule 69 (A -> STRING_LITERAL .)
-    PLUS            reduce using rule 69 (A -> STRING_LITERAL .)
-    MINUS           reduce using rule 69 (A -> STRING_LITERAL .)
-    EQ              reduce using rule 69 (A -> STRING_LITERAL .)
-    NE              reduce using rule 69 (A -> STRING_LITERAL .)
-    LT              reduce using rule 69 (A -> STRING_LITERAL .)
-    GT              reduce using rule 69 (A -> STRING_LITERAL .)
-    LE              reduce using rule 69 (A -> STRING_LITERAL .)
-    GE              reduce using rule 69 (A -> STRING_LITERAL .)
-    AND             reduce using rule 69 (A -> STRING_LITERAL .)
-    OR              reduce using rule 69 (A -> STRING_LITERAL .)
-    SEMI            reduce using rule 69 (A -> STRING_LITERAL .)
-    RPAREN          reduce using rule 69 (A -> STRING_LITERAL .)
-    COMMA           reduce using rule 69 (A -> STRING_LITERAL .)
-
-
-state 38
-
-    (70) A -> TRUE .
-
-    TIMES           reduce using rule 70 (A -> TRUE .)
-    DIVIDE          reduce using rule 70 (A -> TRUE .)
-    MOD             reduce using rule 70 (A -> TRUE .)
-    PLUS            reduce using rule 70 (A -> TRUE .)
-    MINUS           reduce using rule 70 (A -> TRUE .)
-    EQ              reduce using rule 70 (A -> TRUE .)
-    NE              reduce using rule 70 (A -> TRUE .)
-    LT              reduce using rule 70 (A -> TRUE .)
-    GT              reduce using rule 70 (A -> TRUE .)
-    LE              reduce using rule 70 (A -> TRUE .)
-    GE              reduce using rule 70 (A -> TRUE .)
-    AND             reduce using rule 70 (A -> TRUE .)
-    OR              reduce using rule 70 (A -> TRUE .)
-    SEMI            reduce using rule 70 (A -> TRUE .)
-    RPAREN          reduce using rule 70 (A -> TRUE .)
-    COMMA           reduce using rule 70 (A -> TRUE .)
-
-
-state 39
-
-    (71) A -> FALSE .
-
-    TIMES           reduce using rule 71 (A -> FALSE .)
-    DIVIDE          reduce using rule 71 (A -> FALSE .)
-    MOD             reduce using rule 71 (A -> FALSE .)
-    PLUS            reduce using rule 71 (A -> FALSE .)
-    MINUS           reduce using rule 71 (A -> FALSE .)
-    EQ              reduce using rule 71 (A -> FALSE .)
-    NE              reduce using rule 71 (A -> FALSE .)
-    LT              reduce using rule 71 (A -> FALSE .)
-    GT              reduce using rule 71 (A -> FALSE .)
-    LE              reduce using rule 71 (A -> FALSE .)
-    GE              reduce using rule 71 (A -> FALSE .)
-    AND             reduce using rule 71 (A -> FALSE .)
-    OR              reduce using rule 71 (A -> FALSE .)
-    SEMI            reduce using rule 71 (A -> FALSE .)
-    RPAREN          reduce using rule 71 (A -> FALSE .)
-    COMMA           reduce using rule 71 (A -> FALSE .)
-
-
-state 40
-
-    (5) funcion -> MAIN LPAREN RPAREN bloque .
-
-    MAIN            reduce using rule 5 (funcion -> MAIN LPAREN RPAREN bloque .)
-    INT             reduce using rule 5 (funcion -> MAIN LPAREN RPAREN bloque .)
-    FLOAT           reduce using rule 5 (funcion -> MAIN LPAREN RPAREN bloque .)
-    BOOL            reduce using rule 5 (funcion -> MAIN LPAREN RPAREN bloque .)
-    STRING          reduce using rule 5 (funcion -> MAIN LPAREN RPAREN bloque .)
-    VOID            reduce using rule 5 (funcion -> MAIN LPAREN RPAREN bloque .)
-    $end            reduce using rule 5 (funcion -> MAIN LPAREN RPAREN bloque .)
-
-
-state 41
 
     (13) bloque -> LBRACE . instrucciones RBRACE
     (14) instrucciones -> . instruccion instrucciones
@@ -802,625 +523,63 @@ state 41
     (40) tipo -> . VOID
 
     RBRACE          reduce using rule 78 (empty -> .)
-    ID              shift and go to state 85
-    IF              shift and go to state 86
-    WHILE           shift and go to state 87
-    FOR             shift and go to state 88
-    RETURN          shift and go to state 89
-    PRINT           shift and go to state 90
-    INT             shift and go to state 7
-    FLOAT           shift and go to state 8
-    BOOL            shift and go to state 9
-    STRING          shift and go to state 10
-    VOID            shift and go to state 11
-
-    instrucciones                  shift and go to state 74
-    instruccion                    shift and go to state 75
-    empty                          shift and go to state 76
-    declaracion                    shift and go to state 77
-    asignacion                     shift and go to state 78
-    If                             shift and go to state 79
-    While                          shift and go to state 80
-    For                            shift and go to state 81
-    Return                         shift and go to state 82
-    Print                          shift and go to state 83
-    tipo                           shift and go to state 84
-
-state 42
-
-    (7) funcion_rest -> LPAREN parametros RPAREN . bloque
-    (13) bloque -> . LBRACE instrucciones RBRACE
-
-    LBRACE          shift and go to state 41
-
-    bloque                         shift and go to state 91
-
-state 43
-
-    (8) parametros -> parametro parametros_rest .
-
-    RPAREN          reduce using rule 8 (parametros -> parametro parametros_rest .)
-
-
-state 44
-
-    (10) parametros_rest -> COMMA . parametro parametros_rest
-    (12) parametro -> . tipo ID
-    (36) tipo -> . INT
-    (37) tipo -> . FLOAT
-    (38) tipo -> . BOOL
-    (39) tipo -> . STRING
-    (40) tipo -> . VOID
-
-    INT             shift and go to state 7
-    FLOAT           shift and go to state 8
-    BOOL            shift and go to state 9
-    STRING          shift and go to state 10
-    VOID            shift and go to state 11
-
-    parametro                      shift and go to state 92
-    tipo                           shift and go to state 25
-
-state 45
-
-    (11) parametros_rest -> empty .
-
-    RPAREN          reduce using rule 11 (parametros_rest -> empty .)
-
-
-state 46
-
-    (12) parametro -> tipo ID .
-
-    COMMA           reduce using rule 12 (parametro -> tipo ID .)
-    RPAREN          reduce using rule 12 (parametro -> tipo ID .)
-
-
-state 47
-
-    (42) E -> C E_rest .
-
-    SEMI            reduce using rule 42 (E -> C E_rest .)
-    RPAREN          reduce using rule 42 (E -> C E_rest .)
-    COMMA           reduce using rule 42 (E -> C E_rest .)
-
-
-state 48
-
-    (43) E_rest -> OR . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    C                              shift and go to state 93
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 49
-
-    (44) E_rest -> empty .
-
-    SEMI            reduce using rule 44 (E_rest -> empty .)
-    RPAREN          reduce using rule 44 (E_rest -> empty .)
-    COMMA           reduce using rule 44 (E_rest -> empty .)
-
-
-state 50
-
-    (45) C -> R C_rest .
-
-    OR              reduce using rule 45 (C -> R C_rest .)
-    SEMI            reduce using rule 45 (C -> R C_rest .)
-    RPAREN          reduce using rule 45 (C -> R C_rest .)
-    COMMA           reduce using rule 45 (C -> R C_rest .)
-
-
-state 51
-
-    (46) C_rest -> AND . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    R                              shift and go to state 94
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 52
-
-    (47) C_rest -> empty .
-
-    OR              reduce using rule 47 (C_rest -> empty .)
-    SEMI            reduce using rule 47 (C_rest -> empty .)
-    RPAREN          reduce using rule 47 (C_rest -> empty .)
-    COMMA           reduce using rule 47 (C_rest -> empty .)
-
-
-state 53
-
-    (48) R -> T R_rest .
-
-    AND             reduce using rule 48 (R -> T R_rest .)
-    OR              reduce using rule 48 (R -> T R_rest .)
-    SEMI            reduce using rule 48 (R -> T R_rest .)
-    RPAREN          reduce using rule 48 (R -> T R_rest .)
-    COMMA           reduce using rule 48 (R -> T R_rest .)
-
-
-state 54
-
-    (49) R_rest -> EQ . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    T                              shift and go to state 95
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 55
-
-    (50) R_rest -> NE . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    T                              shift and go to state 96
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 56
-
-    (51) R_rest -> LT . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    T                              shift and go to state 97
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 57
-
-    (52) R_rest -> GT . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    T                              shift and go to state 98
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 58
-
-    (53) R_rest -> LE . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    T                              shift and go to state 99
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 59
-
-    (54) R_rest -> GE . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    T                              shift and go to state 100
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 60
-
-    (55) R_rest -> empty .
-
-    AND             reduce using rule 55 (R_rest -> empty .)
-    OR              reduce using rule 55 (R_rest -> empty .)
-    SEMI            reduce using rule 55 (R_rest -> empty .)
-    RPAREN          reduce using rule 55 (R_rest -> empty .)
-    COMMA           reduce using rule 55 (R_rest -> empty .)
-
-
-state 61
-
-    (56) T -> F T_rest .
-
-    EQ              reduce using rule 56 (T -> F T_rest .)
-    NE              reduce using rule 56 (T -> F T_rest .)
-    LT              reduce using rule 56 (T -> F T_rest .)
-    GT              reduce using rule 56 (T -> F T_rest .)
-    LE              reduce using rule 56 (T -> F T_rest .)
-    GE              reduce using rule 56 (T -> F T_rest .)
-    AND             reduce using rule 56 (T -> F T_rest .)
-    OR              reduce using rule 56 (T -> F T_rest .)
-    SEMI            reduce using rule 56 (T -> F T_rest .)
-    RPAREN          reduce using rule 56 (T -> F T_rest .)
-    COMMA           reduce using rule 56 (T -> F T_rest .)
-
-
-state 62
-
-    (57) T_rest -> PLUS . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    F                              shift and go to state 101
-    A                              shift and go to state 32
-
-state 63
-
-    (58) T_rest -> MINUS . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    F                              shift and go to state 102
-    A                              shift and go to state 32
-
-state 64
-
-    (59) T_rest -> empty .
-
-    EQ              reduce using rule 59 (T_rest -> empty .)
-    NE              reduce using rule 59 (T_rest -> empty .)
-    LT              reduce using rule 59 (T_rest -> empty .)
-    GT              reduce using rule 59 (T_rest -> empty .)
-    LE              reduce using rule 59 (T_rest -> empty .)
-    GE              reduce using rule 59 (T_rest -> empty .)
-    AND             reduce using rule 59 (T_rest -> empty .)
-    OR              reduce using rule 59 (T_rest -> empty .)
-    SEMI            reduce using rule 59 (T_rest -> empty .)
-    RPAREN          reduce using rule 59 (T_rest -> empty .)
-    COMMA           reduce using rule 59 (T_rest -> empty .)
-
-
-state 65
-
-    (60) F -> A F_rest .
-
-    PLUS            reduce using rule 60 (F -> A F_rest .)
-    MINUS           reduce using rule 60 (F -> A F_rest .)
-    EQ              reduce using rule 60 (F -> A F_rest .)
-    NE              reduce using rule 60 (F -> A F_rest .)
-    LT              reduce using rule 60 (F -> A F_rest .)
-    GT              reduce using rule 60 (F -> A F_rest .)
-    LE              reduce using rule 60 (F -> A F_rest .)
-    GE              reduce using rule 60 (F -> A F_rest .)
-    AND             reduce using rule 60 (F -> A F_rest .)
-    OR              reduce using rule 60 (F -> A F_rest .)
-    SEMI            reduce using rule 60 (F -> A F_rest .)
-    RPAREN          reduce using rule 60 (F -> A F_rest .)
-    COMMA           reduce using rule 60 (F -> A F_rest .)
-
-
-state 66
-
-    (61) F_rest -> TIMES . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    A                              shift and go to state 103
-
-state 67
-
-    (62) F_rest -> DIVIDE . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    A                              shift and go to state 104
-
-state 68
-
-    (63) F_rest -> MOD . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    A                              shift and go to state 105
-
-state 69
-
-    (64) F_rest -> empty .
-
-    PLUS            reduce using rule 64 (F_rest -> empty .)
-    MINUS           reduce using rule 64 (F_rest -> empty .)
-    EQ              reduce using rule 64 (F_rest -> empty .)
-    NE              reduce using rule 64 (F_rest -> empty .)
-    LT              reduce using rule 64 (F_rest -> empty .)
-    GT              reduce using rule 64 (F_rest -> empty .)
-    LE              reduce using rule 64 (F_rest -> empty .)
-    GE              reduce using rule 64 (F_rest -> empty .)
-    AND             reduce using rule 64 (F_rest -> empty .)
-    OR              reduce using rule 64 (F_rest -> empty .)
-    SEMI            reduce using rule 64 (F_rest -> empty .)
-    RPAREN          reduce using rule 64 (F_rest -> empty .)
-    COMMA           reduce using rule 64 (F_rest -> empty .)
-
-
-state 70
-
-    (65) A -> LPAREN exp . RPAREN
-
-    RPAREN          shift and go to state 106
-
-
-state 71
-
-    (66) A -> ID llamada_func .
-
-    TIMES           reduce using rule 66 (A -> ID llamada_func .)
-    DIVIDE          reduce using rule 66 (A -> ID llamada_func .)
-    MOD             reduce using rule 66 (A -> ID llamada_func .)
-    PLUS            reduce using rule 66 (A -> ID llamada_func .)
-    MINUS           reduce using rule 66 (A -> ID llamada_func .)
-    EQ              reduce using rule 66 (A -> ID llamada_func .)
-    NE              reduce using rule 66 (A -> ID llamada_func .)
-    LT              reduce using rule 66 (A -> ID llamada_func .)
-    GT              reduce using rule 66 (A -> ID llamada_func .)
-    LE              reduce using rule 66 (A -> ID llamada_func .)
-    GE              reduce using rule 66 (A -> ID llamada_func .)
-    AND             reduce using rule 66 (A -> ID llamada_func .)
-    OR              reduce using rule 66 (A -> ID llamada_func .)
-    SEMI            reduce using rule 66 (A -> ID llamada_func .)
-    RPAREN          reduce using rule 66 (A -> ID llamada_func .)
-    COMMA           reduce using rule 66 (A -> ID llamada_func .)
-
-
-state 72
-
-    (72) llamada_func -> LPAREN . lista_args RPAREN
-    (74) lista_args -> . exp lista_args_rest
-    (75) lista_args -> . empty
-    (41) exp -> . E
+    ID              shift and go to state 44
+    IF              shift and go to state 45
+    WHILE           shift and go to state 46
+    FOR             shift and go to state 47
+    RETURN          shift and go to state 48
+    PRINT           shift and go to state 49
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    BOOL            shift and go to state 10
+    STRING          shift and go to state 11
+    VOID            shift and go to state 21
+
+    instrucciones                  shift and go to state 33
+    instruccion                    shift and go to state 34
+    empty                          shift and go to state 35
+    declaracion                    shift and go to state 36
+    asignacion                     shift and go to state 37
+    If                             shift and go to state 38
+    While                          shift and go to state 39
+    For                            shift and go to state 40
+    Return                         shift and go to state 41
+    Print                          shift and go to state 42
+    tipo                           shift and go to state 43
+
+state 31
+
+    (10) parametros_rest -> COMMA parametro . parametros_rest
+    (10) parametros_rest -> . COMMA parametro parametros_rest
+    (11) parametros_rest -> . empty
     (78) empty -> .
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
 
+    COMMA           shift and go to state 26
     RPAREN          reduce using rule 78 (empty -> .)
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
 
-    lista_args                     shift and go to state 107
-    exp                            shift and go to state 108
-    empty                          shift and go to state 109
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
+    parametros_rest                shift and go to state 50
+    empty                          shift and go to state 27
 
-state 73
+state 32
 
-    (73) llamada_func -> empty .
+    (7) main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque .
 
-    TIMES           reduce using rule 73 (llamada_func -> empty .)
-    DIVIDE          reduce using rule 73 (llamada_func -> empty .)
-    MOD             reduce using rule 73 (llamada_func -> empty .)
-    PLUS            reduce using rule 73 (llamada_func -> empty .)
-    MINUS           reduce using rule 73 (llamada_func -> empty .)
-    EQ              reduce using rule 73 (llamada_func -> empty .)
-    NE              reduce using rule 73 (llamada_func -> empty .)
-    LT              reduce using rule 73 (llamada_func -> empty .)
-    GT              reduce using rule 73 (llamada_func -> empty .)
-    LE              reduce using rule 73 (llamada_func -> empty .)
-    GE              reduce using rule 73 (llamada_func -> empty .)
-    AND             reduce using rule 73 (llamada_func -> empty .)
-    OR              reduce using rule 73 (llamada_func -> empty .)
-    SEMI            reduce using rule 73 (llamada_func -> empty .)
-    RPAREN          reduce using rule 73 (llamada_func -> empty .)
-    COMMA           reduce using rule 73 (llamada_func -> empty .)
+    VOID            reduce using rule 7 (main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque .)
+    INT             reduce using rule 7 (main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque .)
+    FLOAT           reduce using rule 7 (main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque .)
+    BOOL            reduce using rule 7 (main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque .)
+    STRING          reduce using rule 7 (main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque .)
+    $end            reduce using rule 7 (main_function_def -> VOID MAIN LPAREN parametros RPAREN bloque .)
 
 
-state 74
+state 33
 
     (13) bloque -> LBRACE instrucciones . RBRACE
 
-    RBRACE          shift and go to state 110
+    RBRACE          shift and go to state 51
 
 
-state 75
+state 34
 
     (14) instrucciones -> instruccion . instrucciones
     (14) instrucciones -> . instruccion instrucciones
@@ -1447,52 +606,52 @@ state 75
     (40) tipo -> . VOID
 
     RBRACE          reduce using rule 78 (empty -> .)
-    ID              shift and go to state 85
-    IF              shift and go to state 86
-    WHILE           shift and go to state 87
-    FOR             shift and go to state 88
-    RETURN          shift and go to state 89
-    PRINT           shift and go to state 90
-    INT             shift and go to state 7
-    FLOAT           shift and go to state 8
-    BOOL            shift and go to state 9
-    STRING          shift and go to state 10
-    VOID            shift and go to state 11
+    ID              shift and go to state 44
+    IF              shift and go to state 45
+    WHILE           shift and go to state 46
+    FOR             shift and go to state 47
+    RETURN          shift and go to state 48
+    PRINT           shift and go to state 49
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    BOOL            shift and go to state 10
+    STRING          shift and go to state 11
+    VOID            shift and go to state 21
 
-    instruccion                    shift and go to state 75
-    instrucciones                  shift and go to state 111
-    empty                          shift and go to state 76
-    declaracion                    shift and go to state 77
-    asignacion                     shift and go to state 78
-    If                             shift and go to state 79
-    While                          shift and go to state 80
-    For                            shift and go to state 81
-    Return                         shift and go to state 82
-    Print                          shift and go to state 83
-    tipo                           shift and go to state 84
+    instruccion                    shift and go to state 34
+    instrucciones                  shift and go to state 52
+    empty                          shift and go to state 35
+    declaracion                    shift and go to state 36
+    asignacion                     shift and go to state 37
+    If                             shift and go to state 38
+    While                          shift and go to state 39
+    For                            shift and go to state 40
+    Return                         shift and go to state 41
+    Print                          shift and go to state 42
+    tipo                           shift and go to state 43
 
-state 76
+state 35
 
     (15) instrucciones -> empty .
 
     RBRACE          reduce using rule 15 (instrucciones -> empty .)
 
 
-state 77
+state 36
 
     (16) instruccion -> declaracion . SEMI
 
-    SEMI            shift and go to state 112
+    SEMI            shift and go to state 53
 
 
-state 78
+state 37
 
     (17) instruccion -> asignacion . SEMI
 
-    SEMI            shift and go to state 113
+    SEMI            shift and go to state 54
 
 
-state 79
+state 38
 
     (18) instruccion -> If .
 
@@ -1510,7 +669,7 @@ state 79
     RBRACE          reduce using rule 18 (instruccion -> If .)
 
 
-state 80
+state 39
 
     (19) instruccion -> While .
 
@@ -1528,7 +687,7 @@ state 80
     RBRACE          reduce using rule 19 (instruccion -> While .)
 
 
-state 81
+state 40
 
     (20) instruccion -> For .
 
@@ -1546,7 +705,7 @@ state 81
     RBRACE          reduce using rule 20 (instruccion -> For .)
 
 
-state 82
+state 41
 
     (21) instruccion -> Return .
 
@@ -1564,7 +723,7 @@ state 82
     RBRACE          reduce using rule 21 (instruccion -> Return .)
 
 
-state 83
+state 42
 
     (22) instruccion -> Print .
 
@@ -1582,42 +741,42 @@ state 83
     RBRACE          reduce using rule 22 (instruccion -> Print .)
 
 
-state 84
+state 43
 
     (23) declaracion -> tipo . ID inicializacion
 
-    ID              shift and go to state 114
+    ID              shift and go to state 55
 
 
-state 85
+state 44
 
     (26) asignacion -> ID . EQUALS exp
 
-    EQUALS          shift and go to state 115
+    EQUALS          shift and go to state 56
 
 
-state 86
+state 45
 
     (27) If -> IF . LPAREN exp RPAREN bloque Else
 
-    LPAREN          shift and go to state 116
+    LPAREN          shift and go to state 57
 
 
-state 87
+state 46
 
     (30) While -> WHILE . LPAREN exp RPAREN bloque
 
-    LPAREN          shift and go to state 117
+    LPAREN          shift and go to state 58
 
 
-state 88
+state 47
 
     (31) For -> FOR . LPAREN asignacion SEMI exp SEMI asignacion RPAREN bloque
 
-    LPAREN          shift and go to state 118
+    LPAREN          shift and go to state 59
 
 
-state 89
+state 48
 
     (32) Return -> RETURN . exp_opt SEMI
     (33) exp_opt -> . exp
@@ -1638,89 +797,1296 @@ state 89
     (71) A -> . FALSE
 
     SEMI            reduce using rule 78 (empty -> .)
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
 
-    exp_opt                        shift and go to state 119
-    exp                            shift and go to state 120
-    empty                          shift and go to state 121
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
+    exp_opt                        shift and go to state 60
+    exp                            shift and go to state 61
+    empty                          shift and go to state 62
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
 
-state 90
+state 49
 
     (35) Print -> PRINT . LPAREN exp RPAREN SEMI
 
-    LPAREN          shift and go to state 122
+    LPAREN          shift and go to state 76
+
+
+state 50
+
+    (10) parametros_rest -> COMMA parametro parametros_rest .
+
+    RPAREN          reduce using rule 10 (parametros_rest -> COMMA parametro parametros_rest .)
+
+
+state 51
+
+    (13) bloque -> LBRACE instrucciones RBRACE .
+
+    VOID            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    INT             reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    FLOAT           reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    BOOL            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    STRING          reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    $end            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    ELSE            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    ID              reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    IF              reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    WHILE           reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    FOR             reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    RETURN          reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    PRINT           reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    RBRACE          reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+
+
+state 52
+
+    (14) instrucciones -> instruccion instrucciones .
+
+    RBRACE          reduce using rule 14 (instrucciones -> instruccion instrucciones .)
+
+
+state 53
+
+    (16) instruccion -> declaracion SEMI .
+
+    ID              reduce using rule 16 (instruccion -> declaracion SEMI .)
+    IF              reduce using rule 16 (instruccion -> declaracion SEMI .)
+    WHILE           reduce using rule 16 (instruccion -> declaracion SEMI .)
+    FOR             reduce using rule 16 (instruccion -> declaracion SEMI .)
+    RETURN          reduce using rule 16 (instruccion -> declaracion SEMI .)
+    PRINT           reduce using rule 16 (instruccion -> declaracion SEMI .)
+    INT             reduce using rule 16 (instruccion -> declaracion SEMI .)
+    FLOAT           reduce using rule 16 (instruccion -> declaracion SEMI .)
+    BOOL            reduce using rule 16 (instruccion -> declaracion SEMI .)
+    STRING          reduce using rule 16 (instruccion -> declaracion SEMI .)
+    VOID            reduce using rule 16 (instruccion -> declaracion SEMI .)
+    RBRACE          reduce using rule 16 (instruccion -> declaracion SEMI .)
+
+
+state 54
+
+    (17) instruccion -> asignacion SEMI .
+
+    ID              reduce using rule 17 (instruccion -> asignacion SEMI .)
+    IF              reduce using rule 17 (instruccion -> asignacion SEMI .)
+    WHILE           reduce using rule 17 (instruccion -> asignacion SEMI .)
+    FOR             reduce using rule 17 (instruccion -> asignacion SEMI .)
+    RETURN          reduce using rule 17 (instruccion -> asignacion SEMI .)
+    PRINT           reduce using rule 17 (instruccion -> asignacion SEMI .)
+    INT             reduce using rule 17 (instruccion -> asignacion SEMI .)
+    FLOAT           reduce using rule 17 (instruccion -> asignacion SEMI .)
+    BOOL            reduce using rule 17 (instruccion -> asignacion SEMI .)
+    STRING          reduce using rule 17 (instruccion -> asignacion SEMI .)
+    VOID            reduce using rule 17 (instruccion -> asignacion SEMI .)
+    RBRACE          reduce using rule 17 (instruccion -> asignacion SEMI .)
+
+
+state 55
+
+    (23) declaracion -> tipo ID . inicializacion
+    (24) inicializacion -> . EQUALS exp
+    (25) inicializacion -> . empty
+    (78) empty -> .
+
+    EQUALS          shift and go to state 78
+    SEMI            reduce using rule 78 (empty -> .)
+
+    inicializacion                 shift and go to state 77
+    empty                          shift and go to state 79
+
+state 56
+
+    (26) asignacion -> ID EQUALS . exp
+    (41) exp -> . E
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    exp                            shift and go to state 80
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 57
+
+    (27) If -> IF LPAREN . exp RPAREN bloque Else
+    (41) exp -> . E
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    exp                            shift and go to state 81
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 58
+
+    (30) While -> WHILE LPAREN . exp RPAREN bloque
+    (41) exp -> . E
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    exp                            shift and go to state 82
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 59
+
+    (31) For -> FOR LPAREN . asignacion SEMI exp SEMI asignacion RPAREN bloque
+    (26) asignacion -> . ID EQUALS exp
+
+    ID              shift and go to state 44
+
+    asignacion                     shift and go to state 83
+
+state 60
+
+    (32) Return -> RETURN exp_opt . SEMI
+
+    SEMI            shift and go to state 84
+
+
+state 61
+
+    (33) exp_opt -> exp .
+
+    SEMI            reduce using rule 33 (exp_opt -> exp .)
+
+
+state 62
+
+    (34) exp_opt -> empty .
+
+    SEMI            reduce using rule 34 (exp_opt -> empty .)
+
+
+state 63
+
+    (41) exp -> E .
+
+    SEMI            reduce using rule 41 (exp -> E .)
+    RPAREN          reduce using rule 41 (exp -> E .)
+    COMMA           reduce using rule 41 (exp -> E .)
+
+
+state 64
+
+    (42) E -> C . E_rest
+    (43) E_rest -> . OR C E_rest
+    (44) E_rest -> . empty
+    (78) empty -> .
+
+    OR              shift and go to state 86
+    SEMI            reduce using rule 78 (empty -> .)
+    RPAREN          reduce using rule 78 (empty -> .)
+    COMMA           reduce using rule 78 (empty -> .)
+
+    E_rest                         shift and go to state 85
+    empty                          shift and go to state 87
+
+state 65
+
+    (45) C -> R . C_rest
+    (46) C_rest -> . AND R C_rest
+    (47) C_rest -> . empty
+    (78) empty -> .
+
+    AND             shift and go to state 89
+    OR              reduce using rule 78 (empty -> .)
+    SEMI            reduce using rule 78 (empty -> .)
+    RPAREN          reduce using rule 78 (empty -> .)
+    COMMA           reduce using rule 78 (empty -> .)
+
+    C_rest                         shift and go to state 88
+    empty                          shift and go to state 90
+
+state 66
+
+    (48) R -> T . R_rest
+    (49) R_rest -> . EQ T R_rest
+    (50) R_rest -> . NE T R_rest
+    (51) R_rest -> . LT T R_rest
+    (52) R_rest -> . GT T R_rest
+    (53) R_rest -> . LE T R_rest
+    (54) R_rest -> . GE T R_rest
+    (55) R_rest -> . empty
+    (78) empty -> .
+
+    EQ              shift and go to state 92
+    NE              shift and go to state 93
+    LT              shift and go to state 94
+    GT              shift and go to state 95
+    LE              shift and go to state 96
+    GE              shift and go to state 97
+    AND             reduce using rule 78 (empty -> .)
+    OR              reduce using rule 78 (empty -> .)
+    SEMI            reduce using rule 78 (empty -> .)
+    RPAREN          reduce using rule 78 (empty -> .)
+    COMMA           reduce using rule 78 (empty -> .)
+
+    R_rest                         shift and go to state 91
+    empty                          shift and go to state 98
+
+state 67
+
+    (56) T -> F . T_rest
+    (57) T_rest -> . PLUS F T_rest
+    (58) T_rest -> . MINUS F T_rest
+    (59) T_rest -> . empty
+    (78) empty -> .
+
+    PLUS            shift and go to state 100
+    MINUS           shift and go to state 101
+    EQ              reduce using rule 78 (empty -> .)
+    NE              reduce using rule 78 (empty -> .)
+    LT              reduce using rule 78 (empty -> .)
+    GT              reduce using rule 78 (empty -> .)
+    LE              reduce using rule 78 (empty -> .)
+    GE              reduce using rule 78 (empty -> .)
+    AND             reduce using rule 78 (empty -> .)
+    OR              reduce using rule 78 (empty -> .)
+    SEMI            reduce using rule 78 (empty -> .)
+    RPAREN          reduce using rule 78 (empty -> .)
+    COMMA           reduce using rule 78 (empty -> .)
+
+    T_rest                         shift and go to state 99
+    empty                          shift and go to state 102
+
+state 68
+
+    (60) F -> A . F_rest
+    (61) F_rest -> . TIMES A F_rest
+    (62) F_rest -> . DIVIDE A F_rest
+    (63) F_rest -> . MOD A F_rest
+    (64) F_rest -> . empty
+    (78) empty -> .
+
+    TIMES           shift and go to state 104
+    DIVIDE          shift and go to state 105
+    MOD             shift and go to state 106
+    PLUS            reduce using rule 78 (empty -> .)
+    MINUS           reduce using rule 78 (empty -> .)
+    EQ              reduce using rule 78 (empty -> .)
+    NE              reduce using rule 78 (empty -> .)
+    LT              reduce using rule 78 (empty -> .)
+    GT              reduce using rule 78 (empty -> .)
+    LE              reduce using rule 78 (empty -> .)
+    GE              reduce using rule 78 (empty -> .)
+    AND             reduce using rule 78 (empty -> .)
+    OR              reduce using rule 78 (empty -> .)
+    SEMI            reduce using rule 78 (empty -> .)
+    RPAREN          reduce using rule 78 (empty -> .)
+    COMMA           reduce using rule 78 (empty -> .)
+
+    F_rest                         shift and go to state 103
+    empty                          shift and go to state 107
+
+state 69
+
+    (65) A -> LPAREN . exp RPAREN
+    (41) exp -> . E
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    exp                            shift and go to state 108
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 70
+
+    (66) A -> ID . llamada_func
+    (72) llamada_func -> . LPAREN lista_args RPAREN
+    (73) llamada_func -> . empty
+    (78) empty -> .
+
+    LPAREN          shift and go to state 110
+    TIMES           reduce using rule 78 (empty -> .)
+    DIVIDE          reduce using rule 78 (empty -> .)
+    MOD             reduce using rule 78 (empty -> .)
+    PLUS            reduce using rule 78 (empty -> .)
+    MINUS           reduce using rule 78 (empty -> .)
+    EQ              reduce using rule 78 (empty -> .)
+    NE              reduce using rule 78 (empty -> .)
+    LT              reduce using rule 78 (empty -> .)
+    GT              reduce using rule 78 (empty -> .)
+    LE              reduce using rule 78 (empty -> .)
+    GE              reduce using rule 78 (empty -> .)
+    AND             reduce using rule 78 (empty -> .)
+    OR              reduce using rule 78 (empty -> .)
+    SEMI            reduce using rule 78 (empty -> .)
+    RPAREN          reduce using rule 78 (empty -> .)
+    COMMA           reduce using rule 78 (empty -> .)
+
+    llamada_func                   shift and go to state 109
+    empty                          shift and go to state 111
+
+state 71
+
+    (67) A -> INT_NUM .
+
+    TIMES           reduce using rule 67 (A -> INT_NUM .)
+    DIVIDE          reduce using rule 67 (A -> INT_NUM .)
+    MOD             reduce using rule 67 (A -> INT_NUM .)
+    PLUS            reduce using rule 67 (A -> INT_NUM .)
+    MINUS           reduce using rule 67 (A -> INT_NUM .)
+    EQ              reduce using rule 67 (A -> INT_NUM .)
+    NE              reduce using rule 67 (A -> INT_NUM .)
+    LT              reduce using rule 67 (A -> INT_NUM .)
+    GT              reduce using rule 67 (A -> INT_NUM .)
+    LE              reduce using rule 67 (A -> INT_NUM .)
+    GE              reduce using rule 67 (A -> INT_NUM .)
+    AND             reduce using rule 67 (A -> INT_NUM .)
+    OR              reduce using rule 67 (A -> INT_NUM .)
+    SEMI            reduce using rule 67 (A -> INT_NUM .)
+    RPAREN          reduce using rule 67 (A -> INT_NUM .)
+    COMMA           reduce using rule 67 (A -> INT_NUM .)
+
+
+state 72
+
+    (68) A -> FLOAT_NUM .
+
+    TIMES           reduce using rule 68 (A -> FLOAT_NUM .)
+    DIVIDE          reduce using rule 68 (A -> FLOAT_NUM .)
+    MOD             reduce using rule 68 (A -> FLOAT_NUM .)
+    PLUS            reduce using rule 68 (A -> FLOAT_NUM .)
+    MINUS           reduce using rule 68 (A -> FLOAT_NUM .)
+    EQ              reduce using rule 68 (A -> FLOAT_NUM .)
+    NE              reduce using rule 68 (A -> FLOAT_NUM .)
+    LT              reduce using rule 68 (A -> FLOAT_NUM .)
+    GT              reduce using rule 68 (A -> FLOAT_NUM .)
+    LE              reduce using rule 68 (A -> FLOAT_NUM .)
+    GE              reduce using rule 68 (A -> FLOAT_NUM .)
+    AND             reduce using rule 68 (A -> FLOAT_NUM .)
+    OR              reduce using rule 68 (A -> FLOAT_NUM .)
+    SEMI            reduce using rule 68 (A -> FLOAT_NUM .)
+    RPAREN          reduce using rule 68 (A -> FLOAT_NUM .)
+    COMMA           reduce using rule 68 (A -> FLOAT_NUM .)
+
+
+state 73
+
+    (69) A -> STRING_LITERAL .
+
+    TIMES           reduce using rule 69 (A -> STRING_LITERAL .)
+    DIVIDE          reduce using rule 69 (A -> STRING_LITERAL .)
+    MOD             reduce using rule 69 (A -> STRING_LITERAL .)
+    PLUS            reduce using rule 69 (A -> STRING_LITERAL .)
+    MINUS           reduce using rule 69 (A -> STRING_LITERAL .)
+    EQ              reduce using rule 69 (A -> STRING_LITERAL .)
+    NE              reduce using rule 69 (A -> STRING_LITERAL .)
+    LT              reduce using rule 69 (A -> STRING_LITERAL .)
+    GT              reduce using rule 69 (A -> STRING_LITERAL .)
+    LE              reduce using rule 69 (A -> STRING_LITERAL .)
+    GE              reduce using rule 69 (A -> STRING_LITERAL .)
+    AND             reduce using rule 69 (A -> STRING_LITERAL .)
+    OR              reduce using rule 69 (A -> STRING_LITERAL .)
+    SEMI            reduce using rule 69 (A -> STRING_LITERAL .)
+    RPAREN          reduce using rule 69 (A -> STRING_LITERAL .)
+    COMMA           reduce using rule 69 (A -> STRING_LITERAL .)
+
+
+state 74
+
+    (70) A -> TRUE .
+
+    TIMES           reduce using rule 70 (A -> TRUE .)
+    DIVIDE          reduce using rule 70 (A -> TRUE .)
+    MOD             reduce using rule 70 (A -> TRUE .)
+    PLUS            reduce using rule 70 (A -> TRUE .)
+    MINUS           reduce using rule 70 (A -> TRUE .)
+    EQ              reduce using rule 70 (A -> TRUE .)
+    NE              reduce using rule 70 (A -> TRUE .)
+    LT              reduce using rule 70 (A -> TRUE .)
+    GT              reduce using rule 70 (A -> TRUE .)
+    LE              reduce using rule 70 (A -> TRUE .)
+    GE              reduce using rule 70 (A -> TRUE .)
+    AND             reduce using rule 70 (A -> TRUE .)
+    OR              reduce using rule 70 (A -> TRUE .)
+    SEMI            reduce using rule 70 (A -> TRUE .)
+    RPAREN          reduce using rule 70 (A -> TRUE .)
+    COMMA           reduce using rule 70 (A -> TRUE .)
+
+
+state 75
+
+    (71) A -> FALSE .
+
+    TIMES           reduce using rule 71 (A -> FALSE .)
+    DIVIDE          reduce using rule 71 (A -> FALSE .)
+    MOD             reduce using rule 71 (A -> FALSE .)
+    PLUS            reduce using rule 71 (A -> FALSE .)
+    MINUS           reduce using rule 71 (A -> FALSE .)
+    EQ              reduce using rule 71 (A -> FALSE .)
+    NE              reduce using rule 71 (A -> FALSE .)
+    LT              reduce using rule 71 (A -> FALSE .)
+    GT              reduce using rule 71 (A -> FALSE .)
+    LE              reduce using rule 71 (A -> FALSE .)
+    GE              reduce using rule 71 (A -> FALSE .)
+    AND             reduce using rule 71 (A -> FALSE .)
+    OR              reduce using rule 71 (A -> FALSE .)
+    SEMI            reduce using rule 71 (A -> FALSE .)
+    RPAREN          reduce using rule 71 (A -> FALSE .)
+    COMMA           reduce using rule 71 (A -> FALSE .)
+
+
+state 76
+
+    (35) Print -> PRINT LPAREN . exp RPAREN SEMI
+    (41) exp -> . E
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    exp                            shift and go to state 112
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 77
+
+    (23) declaracion -> tipo ID inicializacion .
+
+    SEMI            reduce using rule 23 (declaracion -> tipo ID inicializacion .)
+
+
+state 78
+
+    (24) inicializacion -> EQUALS . exp
+    (41) exp -> . E
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    exp                            shift and go to state 113
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 79
+
+    (25) inicializacion -> empty .
+
+    SEMI            reduce using rule 25 (inicializacion -> empty .)
+
+
+state 80
+
+    (26) asignacion -> ID EQUALS exp .
+
+    SEMI            reduce using rule 26 (asignacion -> ID EQUALS exp .)
+    RPAREN          reduce using rule 26 (asignacion -> ID EQUALS exp .)
+
+
+state 81
+
+    (27) If -> IF LPAREN exp . RPAREN bloque Else
+
+    RPAREN          shift and go to state 114
+
+
+state 82
+
+    (30) While -> WHILE LPAREN exp . RPAREN bloque
+
+    RPAREN          shift and go to state 115
+
+
+state 83
+
+    (31) For -> FOR LPAREN asignacion . SEMI exp SEMI asignacion RPAREN bloque
+
+    SEMI            shift and go to state 116
+
+
+state 84
+
+    (32) Return -> RETURN exp_opt SEMI .
+
+    ID              reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    IF              reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    WHILE           reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    FOR             reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    RETURN          reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    PRINT           reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    INT             reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    FLOAT           reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    BOOL            reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    STRING          reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    VOID            reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+    RBRACE          reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
+
+
+state 85
+
+    (42) E -> C E_rest .
+
+    SEMI            reduce using rule 42 (E -> C E_rest .)
+    RPAREN          reduce using rule 42 (E -> C E_rest .)
+    COMMA           reduce using rule 42 (E -> C E_rest .)
+
+
+state 86
+
+    (43) E_rest -> OR . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    C                              shift and go to state 117
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 87
+
+    (44) E_rest -> empty .
+
+    SEMI            reduce using rule 44 (E_rest -> empty .)
+    RPAREN          reduce using rule 44 (E_rest -> empty .)
+    COMMA           reduce using rule 44 (E_rest -> empty .)
+
+
+state 88
+
+    (45) C -> R C_rest .
+
+    OR              reduce using rule 45 (C -> R C_rest .)
+    SEMI            reduce using rule 45 (C -> R C_rest .)
+    RPAREN          reduce using rule 45 (C -> R C_rest .)
+    COMMA           reduce using rule 45 (C -> R C_rest .)
+
+
+state 89
+
+    (46) C_rest -> AND . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    R                              shift and go to state 118
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 90
+
+    (47) C_rest -> empty .
+
+    OR              reduce using rule 47 (C_rest -> empty .)
+    SEMI            reduce using rule 47 (C_rest -> empty .)
+    RPAREN          reduce using rule 47 (C_rest -> empty .)
+    COMMA           reduce using rule 47 (C_rest -> empty .)
 
 
 state 91
 
-    (7) funcion_rest -> LPAREN parametros RPAREN bloque .
+    (48) R -> T R_rest .
 
-    MAIN            reduce using rule 7 (funcion_rest -> LPAREN parametros RPAREN bloque .)
-    INT             reduce using rule 7 (funcion_rest -> LPAREN parametros RPAREN bloque .)
-    FLOAT           reduce using rule 7 (funcion_rest -> LPAREN parametros RPAREN bloque .)
-    BOOL            reduce using rule 7 (funcion_rest -> LPAREN parametros RPAREN bloque .)
-    STRING          reduce using rule 7 (funcion_rest -> LPAREN parametros RPAREN bloque .)
-    VOID            reduce using rule 7 (funcion_rest -> LPAREN parametros RPAREN bloque .)
-    $end            reduce using rule 7 (funcion_rest -> LPAREN parametros RPAREN bloque .)
+    AND             reduce using rule 48 (R -> T R_rest .)
+    OR              reduce using rule 48 (R -> T R_rest .)
+    SEMI            reduce using rule 48 (R -> T R_rest .)
+    RPAREN          reduce using rule 48 (R -> T R_rest .)
+    COMMA           reduce using rule 48 (R -> T R_rest .)
 
 
 state 92
 
-    (10) parametros_rest -> COMMA parametro . parametros_rest
-    (10) parametros_rest -> . COMMA parametro parametros_rest
-    (11) parametros_rest -> . empty
-    (78) empty -> .
+    (49) R_rest -> EQ . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
 
-    COMMA           shift and go to state 44
-    RPAREN          reduce using rule 78 (empty -> .)
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
 
-    parametros_rest                shift and go to state 123
-    empty                          shift and go to state 45
+    T                              shift and go to state 119
+    F                              shift and go to state 67
+    A                              shift and go to state 68
 
 state 93
+
+    (50) R_rest -> NE . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    T                              shift and go to state 120
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 94
+
+    (51) R_rest -> LT . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    T                              shift and go to state 121
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 95
+
+    (52) R_rest -> GT . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    T                              shift and go to state 122
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 96
+
+    (53) R_rest -> LE . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    T                              shift and go to state 123
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 97
+
+    (54) R_rest -> GE . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    T                              shift and go to state 124
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 98
+
+    (55) R_rest -> empty .
+
+    AND             reduce using rule 55 (R_rest -> empty .)
+    OR              reduce using rule 55 (R_rest -> empty .)
+    SEMI            reduce using rule 55 (R_rest -> empty .)
+    RPAREN          reduce using rule 55 (R_rest -> empty .)
+    COMMA           reduce using rule 55 (R_rest -> empty .)
+
+
+state 99
+
+    (56) T -> F T_rest .
+
+    EQ              reduce using rule 56 (T -> F T_rest .)
+    NE              reduce using rule 56 (T -> F T_rest .)
+    LT              reduce using rule 56 (T -> F T_rest .)
+    GT              reduce using rule 56 (T -> F T_rest .)
+    LE              reduce using rule 56 (T -> F T_rest .)
+    GE              reduce using rule 56 (T -> F T_rest .)
+    AND             reduce using rule 56 (T -> F T_rest .)
+    OR              reduce using rule 56 (T -> F T_rest .)
+    SEMI            reduce using rule 56 (T -> F T_rest .)
+    RPAREN          reduce using rule 56 (T -> F T_rest .)
+    COMMA           reduce using rule 56 (T -> F T_rest .)
+
+
+state 100
+
+    (57) T_rest -> PLUS . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    F                              shift and go to state 125
+    A                              shift and go to state 68
+
+state 101
+
+    (58) T_rest -> MINUS . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    F                              shift and go to state 126
+    A                              shift and go to state 68
+
+state 102
+
+    (59) T_rest -> empty .
+
+    EQ              reduce using rule 59 (T_rest -> empty .)
+    NE              reduce using rule 59 (T_rest -> empty .)
+    LT              reduce using rule 59 (T_rest -> empty .)
+    GT              reduce using rule 59 (T_rest -> empty .)
+    LE              reduce using rule 59 (T_rest -> empty .)
+    GE              reduce using rule 59 (T_rest -> empty .)
+    AND             reduce using rule 59 (T_rest -> empty .)
+    OR              reduce using rule 59 (T_rest -> empty .)
+    SEMI            reduce using rule 59 (T_rest -> empty .)
+    RPAREN          reduce using rule 59 (T_rest -> empty .)
+    COMMA           reduce using rule 59 (T_rest -> empty .)
+
+
+state 103
+
+    (60) F -> A F_rest .
+
+    PLUS            reduce using rule 60 (F -> A F_rest .)
+    MINUS           reduce using rule 60 (F -> A F_rest .)
+    EQ              reduce using rule 60 (F -> A F_rest .)
+    NE              reduce using rule 60 (F -> A F_rest .)
+    LT              reduce using rule 60 (F -> A F_rest .)
+    GT              reduce using rule 60 (F -> A F_rest .)
+    LE              reduce using rule 60 (F -> A F_rest .)
+    GE              reduce using rule 60 (F -> A F_rest .)
+    AND             reduce using rule 60 (F -> A F_rest .)
+    OR              reduce using rule 60 (F -> A F_rest .)
+    SEMI            reduce using rule 60 (F -> A F_rest .)
+    RPAREN          reduce using rule 60 (F -> A F_rest .)
+    COMMA           reduce using rule 60 (F -> A F_rest .)
+
+
+state 104
+
+    (61) F_rest -> TIMES . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    A                              shift and go to state 127
+
+state 105
+
+    (62) F_rest -> DIVIDE . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    A                              shift and go to state 128
+
+state 106
+
+    (63) F_rest -> MOD . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    A                              shift and go to state 129
+
+state 107
+
+    (64) F_rest -> empty .
+
+    PLUS            reduce using rule 64 (F_rest -> empty .)
+    MINUS           reduce using rule 64 (F_rest -> empty .)
+    EQ              reduce using rule 64 (F_rest -> empty .)
+    NE              reduce using rule 64 (F_rest -> empty .)
+    LT              reduce using rule 64 (F_rest -> empty .)
+    GT              reduce using rule 64 (F_rest -> empty .)
+    LE              reduce using rule 64 (F_rest -> empty .)
+    GE              reduce using rule 64 (F_rest -> empty .)
+    AND             reduce using rule 64 (F_rest -> empty .)
+    OR              reduce using rule 64 (F_rest -> empty .)
+    SEMI            reduce using rule 64 (F_rest -> empty .)
+    RPAREN          reduce using rule 64 (F_rest -> empty .)
+    COMMA           reduce using rule 64 (F_rest -> empty .)
+
+
+state 108
+
+    (65) A -> LPAREN exp . RPAREN
+
+    RPAREN          shift and go to state 130
+
+
+state 109
+
+    (66) A -> ID llamada_func .
+
+    TIMES           reduce using rule 66 (A -> ID llamada_func .)
+    DIVIDE          reduce using rule 66 (A -> ID llamada_func .)
+    MOD             reduce using rule 66 (A -> ID llamada_func .)
+    PLUS            reduce using rule 66 (A -> ID llamada_func .)
+    MINUS           reduce using rule 66 (A -> ID llamada_func .)
+    EQ              reduce using rule 66 (A -> ID llamada_func .)
+    NE              reduce using rule 66 (A -> ID llamada_func .)
+    LT              reduce using rule 66 (A -> ID llamada_func .)
+    GT              reduce using rule 66 (A -> ID llamada_func .)
+    LE              reduce using rule 66 (A -> ID llamada_func .)
+    GE              reduce using rule 66 (A -> ID llamada_func .)
+    AND             reduce using rule 66 (A -> ID llamada_func .)
+    OR              reduce using rule 66 (A -> ID llamada_func .)
+    SEMI            reduce using rule 66 (A -> ID llamada_func .)
+    RPAREN          reduce using rule 66 (A -> ID llamada_func .)
+    COMMA           reduce using rule 66 (A -> ID llamada_func .)
+
+
+state 110
+
+    (72) llamada_func -> LPAREN . lista_args RPAREN
+    (74) lista_args -> . exp lista_args_rest
+    (75) lista_args -> . empty
+    (41) exp -> . E
+    (78) empty -> .
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    RPAREN          reduce using rule 78 (empty -> .)
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    lista_args                     shift and go to state 131
+    exp                            shift and go to state 132
+    empty                          shift and go to state 133
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 111
+
+    (73) llamada_func -> empty .
+
+    TIMES           reduce using rule 73 (llamada_func -> empty .)
+    DIVIDE          reduce using rule 73 (llamada_func -> empty .)
+    MOD             reduce using rule 73 (llamada_func -> empty .)
+    PLUS            reduce using rule 73 (llamada_func -> empty .)
+    MINUS           reduce using rule 73 (llamada_func -> empty .)
+    EQ              reduce using rule 73 (llamada_func -> empty .)
+    NE              reduce using rule 73 (llamada_func -> empty .)
+    LT              reduce using rule 73 (llamada_func -> empty .)
+    GT              reduce using rule 73 (llamada_func -> empty .)
+    LE              reduce using rule 73 (llamada_func -> empty .)
+    GE              reduce using rule 73 (llamada_func -> empty .)
+    AND             reduce using rule 73 (llamada_func -> empty .)
+    OR              reduce using rule 73 (llamada_func -> empty .)
+    SEMI            reduce using rule 73 (llamada_func -> empty .)
+    RPAREN          reduce using rule 73 (llamada_func -> empty .)
+    COMMA           reduce using rule 73 (llamada_func -> empty .)
+
+
+state 112
+
+    (35) Print -> PRINT LPAREN exp . RPAREN SEMI
+
+    RPAREN          shift and go to state 134
+
+
+state 113
+
+    (24) inicializacion -> EQUALS exp .
+
+    SEMI            reduce using rule 24 (inicializacion -> EQUALS exp .)
+
+
+state 114
+
+    (27) If -> IF LPAREN exp RPAREN . bloque Else
+    (13) bloque -> . LBRACE instrucciones RBRACE
+
+    LBRACE          shift and go to state 30
+
+    bloque                         shift and go to state 135
+
+state 115
+
+    (30) While -> WHILE LPAREN exp RPAREN . bloque
+    (13) bloque -> . LBRACE instrucciones RBRACE
+
+    LBRACE          shift and go to state 30
+
+    bloque                         shift and go to state 136
+
+state 116
+
+    (31) For -> FOR LPAREN asignacion SEMI . exp SEMI asignacion RPAREN bloque
+    (41) exp -> . E
+    (42) E -> . C E_rest
+    (45) C -> . R C_rest
+    (48) R -> . T R_rest
+    (56) T -> . F T_rest
+    (60) F -> . A F_rest
+    (65) A -> . LPAREN exp RPAREN
+    (66) A -> . ID llamada_func
+    (67) A -> . INT_NUM
+    (68) A -> . FLOAT_NUM
+    (69) A -> . STRING_LITERAL
+    (70) A -> . TRUE
+    (71) A -> . FALSE
+
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
+
+    exp                            shift and go to state 137
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
+
+state 117
 
     (43) E_rest -> OR C . E_rest
     (43) E_rest -> . OR C E_rest
     (44) E_rest -> . empty
     (78) empty -> .
 
-    OR              shift and go to state 48
+    OR              shift and go to state 86
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    E_rest                         shift and go to state 124
-    empty                          shift and go to state 49
+    E_rest                         shift and go to state 138
+    empty                          shift and go to state 87
 
-state 94
+state 118
 
     (46) C_rest -> AND R . C_rest
     (46) C_rest -> . AND R C_rest
     (47) C_rest -> . empty
     (78) empty -> .
 
-    AND             shift and go to state 51
+    AND             shift and go to state 89
     OR              reduce using rule 78 (empty -> .)
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    C_rest                         shift and go to state 125
-    empty                          shift and go to state 52
+    C_rest                         shift and go to state 139
+    empty                          shift and go to state 90
 
-state 95
+state 119
 
     (49) R_rest -> EQ T . R_rest
     (49) R_rest -> . EQ T R_rest
@@ -1732,22 +2098,22 @@ state 95
     (55) R_rest -> . empty
     (78) empty -> .
 
-    EQ              shift and go to state 54
-    NE              shift and go to state 55
-    LT              shift and go to state 56
-    GT              shift and go to state 57
-    LE              shift and go to state 58
-    GE              shift and go to state 59
+    EQ              shift and go to state 92
+    NE              shift and go to state 93
+    LT              shift and go to state 94
+    GT              shift and go to state 95
+    LE              shift and go to state 96
+    GE              shift and go to state 97
     AND             reduce using rule 78 (empty -> .)
     OR              reduce using rule 78 (empty -> .)
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    R_rest                         shift and go to state 126
-    empty                          shift and go to state 60
+    R_rest                         shift and go to state 140
+    empty                          shift and go to state 98
 
-state 96
+state 120
 
     (50) R_rest -> NE T . R_rest
     (49) R_rest -> . EQ T R_rest
@@ -1759,22 +2125,22 @@ state 96
     (55) R_rest -> . empty
     (78) empty -> .
 
-    EQ              shift and go to state 54
-    NE              shift and go to state 55
-    LT              shift and go to state 56
-    GT              shift and go to state 57
-    LE              shift and go to state 58
-    GE              shift and go to state 59
+    EQ              shift and go to state 92
+    NE              shift and go to state 93
+    LT              shift and go to state 94
+    GT              shift and go to state 95
+    LE              shift and go to state 96
+    GE              shift and go to state 97
     AND             reduce using rule 78 (empty -> .)
     OR              reduce using rule 78 (empty -> .)
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    R_rest                         shift and go to state 127
-    empty                          shift and go to state 60
+    R_rest                         shift and go to state 141
+    empty                          shift and go to state 98
 
-state 97
+state 121
 
     (51) R_rest -> LT T . R_rest
     (49) R_rest -> . EQ T R_rest
@@ -1786,22 +2152,22 @@ state 97
     (55) R_rest -> . empty
     (78) empty -> .
 
-    EQ              shift and go to state 54
-    NE              shift and go to state 55
-    LT              shift and go to state 56
-    GT              shift and go to state 57
-    LE              shift and go to state 58
-    GE              shift and go to state 59
+    EQ              shift and go to state 92
+    NE              shift and go to state 93
+    LT              shift and go to state 94
+    GT              shift and go to state 95
+    LE              shift and go to state 96
+    GE              shift and go to state 97
     AND             reduce using rule 78 (empty -> .)
     OR              reduce using rule 78 (empty -> .)
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    R_rest                         shift and go to state 128
-    empty                          shift and go to state 60
+    R_rest                         shift and go to state 142
+    empty                          shift and go to state 98
 
-state 98
+state 122
 
     (52) R_rest -> GT T . R_rest
     (49) R_rest -> . EQ T R_rest
@@ -1813,22 +2179,22 @@ state 98
     (55) R_rest -> . empty
     (78) empty -> .
 
-    EQ              shift and go to state 54
-    NE              shift and go to state 55
-    LT              shift and go to state 56
-    GT              shift and go to state 57
-    LE              shift and go to state 58
-    GE              shift and go to state 59
+    EQ              shift and go to state 92
+    NE              shift and go to state 93
+    LT              shift and go to state 94
+    GT              shift and go to state 95
+    LE              shift and go to state 96
+    GE              shift and go to state 97
     AND             reduce using rule 78 (empty -> .)
     OR              reduce using rule 78 (empty -> .)
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    R_rest                         shift and go to state 129
-    empty                          shift and go to state 60
+    R_rest                         shift and go to state 143
+    empty                          shift and go to state 98
 
-state 99
+state 123
 
     (53) R_rest -> LE T . R_rest
     (49) R_rest -> . EQ T R_rest
@@ -1840,22 +2206,22 @@ state 99
     (55) R_rest -> . empty
     (78) empty -> .
 
-    EQ              shift and go to state 54
-    NE              shift and go to state 55
-    LT              shift and go to state 56
-    GT              shift and go to state 57
-    LE              shift and go to state 58
-    GE              shift and go to state 59
+    EQ              shift and go to state 92
+    NE              shift and go to state 93
+    LT              shift and go to state 94
+    GT              shift and go to state 95
+    LE              shift and go to state 96
+    GE              shift and go to state 97
     AND             reduce using rule 78 (empty -> .)
     OR              reduce using rule 78 (empty -> .)
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    R_rest                         shift and go to state 130
-    empty                          shift and go to state 60
+    R_rest                         shift and go to state 144
+    empty                          shift and go to state 98
 
-state 100
+state 124
 
     (54) R_rest -> GE T . R_rest
     (49) R_rest -> . EQ T R_rest
@@ -1867,22 +2233,22 @@ state 100
     (55) R_rest -> . empty
     (78) empty -> .
 
-    EQ              shift and go to state 54
-    NE              shift and go to state 55
-    LT              shift and go to state 56
-    GT              shift and go to state 57
-    LE              shift and go to state 58
-    GE              shift and go to state 59
+    EQ              shift and go to state 92
+    NE              shift and go to state 93
+    LT              shift and go to state 94
+    GT              shift and go to state 95
+    LE              shift and go to state 96
+    GE              shift and go to state 97
     AND             reduce using rule 78 (empty -> .)
     OR              reduce using rule 78 (empty -> .)
     SEMI            reduce using rule 78 (empty -> .)
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    R_rest                         shift and go to state 131
-    empty                          shift and go to state 60
+    R_rest                         shift and go to state 145
+    empty                          shift and go to state 98
 
-state 101
+state 125
 
     (57) T_rest -> PLUS F . T_rest
     (57) T_rest -> . PLUS F T_rest
@@ -1890,8 +2256,8 @@ state 101
     (59) T_rest -> . empty
     (78) empty -> .
 
-    PLUS            shift and go to state 62
-    MINUS           shift and go to state 63
+    PLUS            shift and go to state 100
+    MINUS           shift and go to state 101
     EQ              reduce using rule 78 (empty -> .)
     NE              reduce using rule 78 (empty -> .)
     LT              reduce using rule 78 (empty -> .)
@@ -1904,10 +2270,10 @@ state 101
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    T_rest                         shift and go to state 132
-    empty                          shift and go to state 64
+    T_rest                         shift and go to state 146
+    empty                          shift and go to state 102
 
-state 102
+state 126
 
     (58) T_rest -> MINUS F . T_rest
     (57) T_rest -> . PLUS F T_rest
@@ -1915,8 +2281,8 @@ state 102
     (59) T_rest -> . empty
     (78) empty -> .
 
-    PLUS            shift and go to state 62
-    MINUS           shift and go to state 63
+    PLUS            shift and go to state 100
+    MINUS           shift and go to state 101
     EQ              reduce using rule 78 (empty -> .)
     NE              reduce using rule 78 (empty -> .)
     LT              reduce using rule 78 (empty -> .)
@@ -1929,10 +2295,10 @@ state 102
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    T_rest                         shift and go to state 133
-    empty                          shift and go to state 64
+    T_rest                         shift and go to state 147
+    empty                          shift and go to state 102
 
-state 103
+state 127
 
     (61) F_rest -> TIMES A . F_rest
     (61) F_rest -> . TIMES A F_rest
@@ -1941,9 +2307,9 @@ state 103
     (64) F_rest -> . empty
     (78) empty -> .
 
-    TIMES           shift and go to state 66
-    DIVIDE          shift and go to state 67
-    MOD             shift and go to state 68
+    TIMES           shift and go to state 104
+    DIVIDE          shift and go to state 105
+    MOD             shift and go to state 106
     PLUS            reduce using rule 78 (empty -> .)
     MINUS           reduce using rule 78 (empty -> .)
     EQ              reduce using rule 78 (empty -> .)
@@ -1958,10 +2324,10 @@ state 103
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    F_rest                         shift and go to state 134
-    empty                          shift and go to state 69
+    F_rest                         shift and go to state 148
+    empty                          shift and go to state 107
 
-state 104
+state 128
 
     (62) F_rest -> DIVIDE A . F_rest
     (61) F_rest -> . TIMES A F_rest
@@ -1970,9 +2336,9 @@ state 104
     (64) F_rest -> . empty
     (78) empty -> .
 
-    TIMES           shift and go to state 66
-    DIVIDE          shift and go to state 67
-    MOD             shift and go to state 68
+    TIMES           shift and go to state 104
+    DIVIDE          shift and go to state 105
+    MOD             shift and go to state 106
     PLUS            reduce using rule 78 (empty -> .)
     MINUS           reduce using rule 78 (empty -> .)
     EQ              reduce using rule 78 (empty -> .)
@@ -1987,10 +2353,10 @@ state 104
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    F_rest                         shift and go to state 135
-    empty                          shift and go to state 69
+    F_rest                         shift and go to state 149
+    empty                          shift and go to state 107
 
-state 105
+state 129
 
     (63) F_rest -> MOD A . F_rest
     (61) F_rest -> . TIMES A F_rest
@@ -1999,9 +2365,9 @@ state 105
     (64) F_rest -> . empty
     (78) empty -> .
 
-    TIMES           shift and go to state 66
-    DIVIDE          shift and go to state 67
-    MOD             shift and go to state 68
+    TIMES           shift and go to state 104
+    DIVIDE          shift and go to state 105
+    MOD             shift and go to state 106
     PLUS            reduce using rule 78 (empty -> .)
     MINUS           reduce using rule 78 (empty -> .)
     EQ              reduce using rule 78 (empty -> .)
@@ -2016,10 +2382,10 @@ state 105
     RPAREN          reduce using rule 78 (empty -> .)
     COMMA           reduce using rule 78 (empty -> .)
 
-    F_rest                         shift and go to state 136
-    empty                          shift and go to state 69
+    F_rest                         shift and go to state 150
+    empty                          shift and go to state 107
 
-state 106
+state 130
 
     (65) A -> LPAREN exp RPAREN .
 
@@ -2041,280 +2407,90 @@ state 106
     COMMA           reduce using rule 65 (A -> LPAREN exp RPAREN .)
 
 
-state 107
+state 131
 
     (72) llamada_func -> LPAREN lista_args . RPAREN
 
-    RPAREN          shift and go to state 137
+    RPAREN          shift and go to state 151
 
 
-state 108
+state 132
 
     (74) lista_args -> exp . lista_args_rest
     (76) lista_args_rest -> . COMMA exp lista_args_rest
     (77) lista_args_rest -> . empty
     (78) empty -> .
 
-    COMMA           shift and go to state 139
+    COMMA           shift and go to state 153
     RPAREN          reduce using rule 78 (empty -> .)
 
-    lista_args_rest                shift and go to state 138
-    empty                          shift and go to state 140
+    lista_args_rest                shift and go to state 152
+    empty                          shift and go to state 154
 
-state 109
+state 133
 
     (75) lista_args -> empty .
 
     RPAREN          reduce using rule 75 (lista_args -> empty .)
 
 
-state 110
+state 134
 
-    (13) bloque -> LBRACE instrucciones RBRACE .
+    (35) Print -> PRINT LPAREN exp RPAREN . SEMI
 
-    MAIN            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    INT             reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    FLOAT           reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    BOOL            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    STRING          reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    VOID            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    $end            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    ELSE            reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    ID              reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    IF              reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    WHILE           reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    FOR             reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    RETURN          reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    PRINT           reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
-    RBRACE          reduce using rule 13 (bloque -> LBRACE instrucciones RBRACE .)
+    SEMI            shift and go to state 155
 
 
-state 111
+state 135
 
-    (14) instrucciones -> instruccion instrucciones .
-
-    RBRACE          reduce using rule 14 (instrucciones -> instruccion instrucciones .)
-
-
-state 112
-
-    (16) instruccion -> declaracion SEMI .
-
-    ID              reduce using rule 16 (instruccion -> declaracion SEMI .)
-    IF              reduce using rule 16 (instruccion -> declaracion SEMI .)
-    WHILE           reduce using rule 16 (instruccion -> declaracion SEMI .)
-    FOR             reduce using rule 16 (instruccion -> declaracion SEMI .)
-    RETURN          reduce using rule 16 (instruccion -> declaracion SEMI .)
-    PRINT           reduce using rule 16 (instruccion -> declaracion SEMI .)
-    INT             reduce using rule 16 (instruccion -> declaracion SEMI .)
-    FLOAT           reduce using rule 16 (instruccion -> declaracion SEMI .)
-    BOOL            reduce using rule 16 (instruccion -> declaracion SEMI .)
-    STRING          reduce using rule 16 (instruccion -> declaracion SEMI .)
-    VOID            reduce using rule 16 (instruccion -> declaracion SEMI .)
-    RBRACE          reduce using rule 16 (instruccion -> declaracion SEMI .)
-
-
-state 113
-
-    (17) instruccion -> asignacion SEMI .
-
-    ID              reduce using rule 17 (instruccion -> asignacion SEMI .)
-    IF              reduce using rule 17 (instruccion -> asignacion SEMI .)
-    WHILE           reduce using rule 17 (instruccion -> asignacion SEMI .)
-    FOR             reduce using rule 17 (instruccion -> asignacion SEMI .)
-    RETURN          reduce using rule 17 (instruccion -> asignacion SEMI .)
-    PRINT           reduce using rule 17 (instruccion -> asignacion SEMI .)
-    INT             reduce using rule 17 (instruccion -> asignacion SEMI .)
-    FLOAT           reduce using rule 17 (instruccion -> asignacion SEMI .)
-    BOOL            reduce using rule 17 (instruccion -> asignacion SEMI .)
-    STRING          reduce using rule 17 (instruccion -> asignacion SEMI .)
-    VOID            reduce using rule 17 (instruccion -> asignacion SEMI .)
-    RBRACE          reduce using rule 17 (instruccion -> asignacion SEMI .)
-
-
-state 114
-
-    (23) declaracion -> tipo ID . inicializacion
-    (24) inicializacion -> . EQUALS exp
-    (25) inicializacion -> . empty
+    (27) If -> IF LPAREN exp RPAREN bloque . Else
+    (28) Else -> . ELSE bloque
+    (29) Else -> . empty
     (78) empty -> .
 
-    EQUALS          shift and go to state 18
-    SEMI            reduce using rule 78 (empty -> .)
+    ELSE            shift and go to state 157
+    ID              reduce using rule 78 (empty -> .)
+    IF              reduce using rule 78 (empty -> .)
+    WHILE           reduce using rule 78 (empty -> .)
+    FOR             reduce using rule 78 (empty -> .)
+    RETURN          reduce using rule 78 (empty -> .)
+    PRINT           reduce using rule 78 (empty -> .)
+    INT             reduce using rule 78 (empty -> .)
+    FLOAT           reduce using rule 78 (empty -> .)
+    BOOL            reduce using rule 78 (empty -> .)
+    STRING          reduce using rule 78 (empty -> .)
+    VOID            reduce using rule 78 (empty -> .)
+    RBRACE          reduce using rule 78 (empty -> .)
 
-    inicializacion                 shift and go to state 141
-    empty                          shift and go to state 19
+    Else                           shift and go to state 156
+    empty                          shift and go to state 158
 
-state 115
+state 136
 
-    (26) asignacion -> ID EQUALS . exp
-    (41) exp -> . E
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
+    (30) While -> WHILE LPAREN exp RPAREN bloque .
 
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    exp                            shift and go to state 142
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 116
-
-    (27) If -> IF LPAREN . exp RPAREN bloque Else
-    (41) exp -> . E
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    exp                            shift and go to state 143
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 117
-
-    (30) While -> WHILE LPAREN . exp RPAREN bloque
-    (41) exp -> . E
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    exp                            shift and go to state 144
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 118
-
-    (31) For -> FOR LPAREN . asignacion SEMI exp SEMI asignacion RPAREN bloque
-    (26) asignacion -> . ID EQUALS exp
-
-    ID              shift and go to state 85
-
-    asignacion                     shift and go to state 145
-
-state 119
-
-    (32) Return -> RETURN exp_opt . SEMI
-
-    SEMI            shift and go to state 146
+    ID              reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    IF              reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    WHILE           reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    FOR             reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    RETURN          reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    PRINT           reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    INT             reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    FLOAT           reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    BOOL            reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    STRING          reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    VOID            reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
+    RBRACE          reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
 
 
-state 120
+state 137
 
-    (33) exp_opt -> exp .
+    (31) For -> FOR LPAREN asignacion SEMI exp . SEMI asignacion RPAREN bloque
 
-    SEMI            reduce using rule 33 (exp_opt -> exp .)
-
-
-state 121
-
-    (34) exp_opt -> empty .
-
-    SEMI            reduce using rule 34 (exp_opt -> empty .)
+    SEMI            shift and go to state 159
 
 
-state 122
-
-    (35) Print -> PRINT LPAREN . exp RPAREN SEMI
-    (41) exp -> . E
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    exp                            shift and go to state 147
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 123
-
-    (10) parametros_rest -> COMMA parametro parametros_rest .
-
-    RPAREN          reduce using rule 10 (parametros_rest -> COMMA parametro parametros_rest .)
-
-
-state 124
+state 138
 
     (43) E_rest -> OR C E_rest .
 
@@ -2323,7 +2499,7 @@ state 124
     COMMA           reduce using rule 43 (E_rest -> OR C E_rest .)
 
 
-state 125
+state 139
 
     (46) C_rest -> AND R C_rest .
 
@@ -2333,7 +2509,7 @@ state 125
     COMMA           reduce using rule 46 (C_rest -> AND R C_rest .)
 
 
-state 126
+state 140
 
     (49) R_rest -> EQ T R_rest .
 
@@ -2344,7 +2520,7 @@ state 126
     COMMA           reduce using rule 49 (R_rest -> EQ T R_rest .)
 
 
-state 127
+state 141
 
     (50) R_rest -> NE T R_rest .
 
@@ -2355,7 +2531,7 @@ state 127
     COMMA           reduce using rule 50 (R_rest -> NE T R_rest .)
 
 
-state 128
+state 142
 
     (51) R_rest -> LT T R_rest .
 
@@ -2366,7 +2542,7 @@ state 128
     COMMA           reduce using rule 51 (R_rest -> LT T R_rest .)
 
 
-state 129
+state 143
 
     (52) R_rest -> GT T R_rest .
 
@@ -2377,7 +2553,7 @@ state 129
     COMMA           reduce using rule 52 (R_rest -> GT T R_rest .)
 
 
-state 130
+state 144
 
     (53) R_rest -> LE T R_rest .
 
@@ -2388,7 +2564,7 @@ state 130
     COMMA           reduce using rule 53 (R_rest -> LE T R_rest .)
 
 
-state 131
+state 145
 
     (54) R_rest -> GE T R_rest .
 
@@ -2399,7 +2575,7 @@ state 131
     COMMA           reduce using rule 54 (R_rest -> GE T R_rest .)
 
 
-state 132
+state 146
 
     (57) T_rest -> PLUS F T_rest .
 
@@ -2416,7 +2592,7 @@ state 132
     COMMA           reduce using rule 57 (T_rest -> PLUS F T_rest .)
 
 
-state 133
+state 147
 
     (58) T_rest -> MINUS F T_rest .
 
@@ -2433,7 +2609,7 @@ state 133
     COMMA           reduce using rule 58 (T_rest -> MINUS F T_rest .)
 
 
-state 134
+state 148
 
     (61) F_rest -> TIMES A F_rest .
 
@@ -2452,7 +2628,7 @@ state 134
     COMMA           reduce using rule 61 (F_rest -> TIMES A F_rest .)
 
 
-state 135
+state 149
 
     (62) F_rest -> DIVIDE A F_rest .
 
@@ -2471,7 +2647,7 @@ state 135
     COMMA           reduce using rule 62 (F_rest -> DIVIDE A F_rest .)
 
 
-state 136
+state 150
 
     (63) F_rest -> MOD A F_rest .
 
@@ -2490,7 +2666,7 @@ state 136
     COMMA           reduce using rule 63 (F_rest -> MOD A F_rest .)
 
 
-state 137
+state 151
 
     (72) llamada_func -> LPAREN lista_args RPAREN .
 
@@ -2512,14 +2688,14 @@ state 137
     COMMA           reduce using rule 72 (llamada_func -> LPAREN lista_args RPAREN .)
 
 
-state 138
+state 152
 
     (74) lista_args -> exp lista_args_rest .
 
     RPAREN          reduce using rule 74 (lista_args -> exp lista_args_rest .)
 
 
-state 139
+state 153
 
     (76) lista_args_rest -> COMMA . exp lista_args_rest
     (41) exp -> . E
@@ -2536,218 +2712,30 @@ state 139
     (70) A -> . TRUE
     (71) A -> . FALSE
 
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
+    LPAREN          shift and go to state 69
+    ID              shift and go to state 70
+    INT_NUM         shift and go to state 71
+    FLOAT_NUM       shift and go to state 72
+    STRING_LITERAL  shift and go to state 73
+    TRUE            shift and go to state 74
+    FALSE           shift and go to state 75
 
-    exp                            shift and go to state 148
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
+    exp                            shift and go to state 160
+    E                              shift and go to state 63
+    C                              shift and go to state 64
+    R                              shift and go to state 65
+    T                              shift and go to state 66
+    F                              shift and go to state 67
+    A                              shift and go to state 68
 
-state 140
+state 154
 
     (77) lista_args_rest -> empty .
 
     RPAREN          reduce using rule 77 (lista_args_rest -> empty .)
 
 
-state 141
-
-    (23) declaracion -> tipo ID inicializacion .
-
-    SEMI            reduce using rule 23 (declaracion -> tipo ID inicializacion .)
-
-
-state 142
-
-    (26) asignacion -> ID EQUALS exp .
-
-    SEMI            reduce using rule 26 (asignacion -> ID EQUALS exp .)
-    RPAREN          reduce using rule 26 (asignacion -> ID EQUALS exp .)
-
-
-state 143
-
-    (27) If -> IF LPAREN exp . RPAREN bloque Else
-
-    RPAREN          shift and go to state 149
-
-
-state 144
-
-    (30) While -> WHILE LPAREN exp . RPAREN bloque
-
-    RPAREN          shift and go to state 150
-
-
-state 145
-
-    (31) For -> FOR LPAREN asignacion . SEMI exp SEMI asignacion RPAREN bloque
-
-    SEMI            shift and go to state 151
-
-
-state 146
-
-    (32) Return -> RETURN exp_opt SEMI .
-
-    ID              reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    IF              reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    WHILE           reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    FOR             reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    RETURN          reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    PRINT           reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    INT             reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    FLOAT           reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    BOOL            reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    STRING          reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    VOID            reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-    RBRACE          reduce using rule 32 (Return -> RETURN exp_opt SEMI .)
-
-
-state 147
-
-    (35) Print -> PRINT LPAREN exp . RPAREN SEMI
-
-    RPAREN          shift and go to state 152
-
-
-state 148
-
-    (76) lista_args_rest -> COMMA exp . lista_args_rest
-    (76) lista_args_rest -> . COMMA exp lista_args_rest
-    (77) lista_args_rest -> . empty
-    (78) empty -> .
-
-    COMMA           shift and go to state 139
-    RPAREN          reduce using rule 78 (empty -> .)
-
-    lista_args_rest                shift and go to state 153
-    empty                          shift and go to state 140
-
-state 149
-
-    (27) If -> IF LPAREN exp RPAREN . bloque Else
-    (13) bloque -> . LBRACE instrucciones RBRACE
-
-    LBRACE          shift and go to state 41
-
-    bloque                         shift and go to state 154
-
-state 150
-
-    (30) While -> WHILE LPAREN exp RPAREN . bloque
-    (13) bloque -> . LBRACE instrucciones RBRACE
-
-    LBRACE          shift and go to state 41
-
-    bloque                         shift and go to state 155
-
-state 151
-
-    (31) For -> FOR LPAREN asignacion SEMI . exp SEMI asignacion RPAREN bloque
-    (41) exp -> . E
-    (42) E -> . C E_rest
-    (45) C -> . R C_rest
-    (48) R -> . T R_rest
-    (56) T -> . F T_rest
-    (60) F -> . A F_rest
-    (65) A -> . LPAREN exp RPAREN
-    (66) A -> . ID llamada_func
-    (67) A -> . INT_NUM
-    (68) A -> . FLOAT_NUM
-    (69) A -> . STRING_LITERAL
-    (70) A -> . TRUE
-    (71) A -> . FALSE
-
-    LPAREN          shift and go to state 33
-    ID              shift and go to state 34
-    INT_NUM         shift and go to state 35
-    FLOAT_NUM       shift and go to state 36
-    STRING_LITERAL  shift and go to state 37
-    TRUE            shift and go to state 38
-    FALSE           shift and go to state 39
-
-    exp                            shift and go to state 156
-    E                              shift and go to state 27
-    C                              shift and go to state 28
-    R                              shift and go to state 29
-    T                              shift and go to state 30
-    F                              shift and go to state 31
-    A                              shift and go to state 32
-
-state 152
-
-    (35) Print -> PRINT LPAREN exp RPAREN . SEMI
-
-    SEMI            shift and go to state 157
-
-
-state 153
-
-    (76) lista_args_rest -> COMMA exp lista_args_rest .
-
-    RPAREN          reduce using rule 76 (lista_args_rest -> COMMA exp lista_args_rest .)
-
-
-state 154
-
-    (27) If -> IF LPAREN exp RPAREN bloque . Else
-    (28) Else -> . ELSE bloque
-    (29) Else -> . empty
-    (78) empty -> .
-
-    ELSE            shift and go to state 159
-    ID              reduce using rule 78 (empty -> .)
-    IF              reduce using rule 78 (empty -> .)
-    WHILE           reduce using rule 78 (empty -> .)
-    FOR             reduce using rule 78 (empty -> .)
-    RETURN          reduce using rule 78 (empty -> .)
-    PRINT           reduce using rule 78 (empty -> .)
-    INT             reduce using rule 78 (empty -> .)
-    FLOAT           reduce using rule 78 (empty -> .)
-    BOOL            reduce using rule 78 (empty -> .)
-    STRING          reduce using rule 78 (empty -> .)
-    VOID            reduce using rule 78 (empty -> .)
-    RBRACE          reduce using rule 78 (empty -> .)
-
-    Else                           shift and go to state 158
-    empty                          shift and go to state 160
-
 state 155
-
-    (30) While -> WHILE LPAREN exp RPAREN bloque .
-
-    ID              reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    IF              reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    WHILE           reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    FOR             reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    RETURN          reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    PRINT           reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    INT             reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    FLOAT           reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    BOOL            reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    STRING          reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    VOID            reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-    RBRACE          reduce using rule 30 (While -> WHILE LPAREN exp RPAREN bloque .)
-
-
-state 156
-
-    (31) For -> FOR LPAREN asignacion SEMI exp . SEMI asignacion RPAREN bloque
-
-    SEMI            shift and go to state 161
-
-
-state 157
 
     (35) Print -> PRINT LPAREN exp RPAREN SEMI .
 
@@ -2765,7 +2753,7 @@ state 157
     RBRACE          reduce using rule 35 (Print -> PRINT LPAREN exp RPAREN SEMI .)
 
 
-state 158
+state 156
 
     (27) If -> IF LPAREN exp RPAREN bloque Else .
 
@@ -2783,16 +2771,16 @@ state 158
     RBRACE          reduce using rule 27 (If -> IF LPAREN exp RPAREN bloque Else .)
 
 
-state 159
+state 157
 
     (28) Else -> ELSE . bloque
     (13) bloque -> . LBRACE instrucciones RBRACE
 
-    LBRACE          shift and go to state 41
+    LBRACE          shift and go to state 30
 
-    bloque                         shift and go to state 162
+    bloque                         shift and go to state 161
 
-state 160
+state 158
 
     (29) Else -> empty .
 
@@ -2810,16 +2798,29 @@ state 160
     RBRACE          reduce using rule 29 (Else -> empty .)
 
 
-state 161
+state 159
 
     (31) For -> FOR LPAREN asignacion SEMI exp SEMI . asignacion RPAREN bloque
     (26) asignacion -> . ID EQUALS exp
 
-    ID              shift and go to state 85
+    ID              shift and go to state 44
 
-    asignacion                     shift and go to state 163
+    asignacion                     shift and go to state 162
 
-state 162
+state 160
+
+    (76) lista_args_rest -> COMMA exp . lista_args_rest
+    (76) lista_args_rest -> . COMMA exp lista_args_rest
+    (77) lista_args_rest -> . empty
+    (78) empty -> .
+
+    COMMA           shift and go to state 153
+    RPAREN          reduce using rule 78 (empty -> .)
+
+    lista_args_rest                shift and go to state 163
+    empty                          shift and go to state 154
+
+state 161
 
     (28) Else -> ELSE bloque .
 
@@ -2837,11 +2838,18 @@ state 162
     RBRACE          reduce using rule 28 (Else -> ELSE bloque .)
 
 
-state 163
+state 162
 
     (31) For -> FOR LPAREN asignacion SEMI exp SEMI asignacion . RPAREN bloque
 
     RPAREN          shift and go to state 164
+
+
+state 163
+
+    (76) lista_args_rest -> COMMA exp lista_args_rest .
+
+    RPAREN          reduce using rule 76 (lista_args_rest -> COMMA exp lista_args_rest .)
 
 
 state 164
@@ -2849,7 +2857,7 @@ state 164
     (31) For -> FOR LPAREN asignacion SEMI exp SEMI asignacion RPAREN . bloque
     (13) bloque -> . LBRACE instrucciones RBRACE
 
-    LBRACE          shift and go to state 41
+    LBRACE          shift and go to state 30
 
     bloque                         shift and go to state 165
 

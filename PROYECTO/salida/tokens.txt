@@ -1,0 +1,30 @@
+=== TOKENS ENCONTRADOS ===
+
+Tipo            Valor                Línea
+----------------------------------------
+INT             int                  1
+ID              hola                 1
+SEMI            ;                    1
+MAIN            main                 3
+LPAREN          (                    3
+RPAREN          )                    3
+LBRACE          {                    3
+INT             int                  4
+ID              x                    4
+EQUALS          =                    4
+INT_NUM         5                    4
+SEMI            ;                    4
+IF              if                   5
+LPAREN          (                    5
+ID              x                    5
+GT              >                    5
+INT_NUM         0                    5
+RPAREN          )                    5
+LBRACE          {                    5
+PRINT           print                6
+LPAREN          (                    6
+STRING_LITERAL  Positivo             6
+RPAREN          )                    6
+SEMI            ;                    6
+RBRACE          }                    7
+RBRACE          }                    8

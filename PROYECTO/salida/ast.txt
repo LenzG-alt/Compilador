@@ -1,0 +1,25 @@
+program:
+  main_function:
+    block:
+      declaration:
+        int
+        x
+        number:
+          5
+      if:
+        >:
+          id:
+            x
+          number:
+            0
+        block:
+          print:
+            string:
+              Positivo
+        block:
+          print:
+            string:
+              Negativo
+      return:
+        number:
+          0

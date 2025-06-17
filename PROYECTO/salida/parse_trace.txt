@@ -1,0 +1,170 @@
+Token: MAIN
+Valor: main
+Línea: 12
+Posición: 9
+----------------------------------------
+Token: LPAREN
+Valor: (
+Línea: 12
+Posición: 13
+----------------------------------------
+Token: RPAREN
+Valor: )
+Línea: 12
+Posición: 14
+----------------------------------------
+Token: LBRACE
+Valor: {
+Línea: 12
+Posición: 16
+----------------------------------------
+Token: INT
+Valor: int
+Línea: 13
+Posición: 30
+----------------------------------------
+Token: ID
+Valor: x
+Línea: 13
+Posición: 34
+----------------------------------------
+Token: EQUALS
+Valor: =
+Línea: 13
+Posición: 36
+----------------------------------------
+Token: INT_NUM
+Valor: 5
+Línea: 13
+Posición: 38
+----------------------------------------
+Token: SEMI
+Valor: ;
+Línea: 13
+Posición: 39
+----------------------------------------
+Token: IF
+Valor: if
+Línea: 14
+Posición: 53
+----------------------------------------
+Token: LPAREN
+Valor: (
+Línea: 14
+Posición: 56
+----------------------------------------
+Token: ID
+Valor: x
+Línea: 14
+Posición: 57
+----------------------------------------
+Token: GT
+Valor: >
+Línea: 14
+Posición: 59
+----------------------------------------
+Token: INT_NUM
+Valor: 0
+Línea: 14
+Posición: 61
+----------------------------------------
+Token: RPAREN
+Valor: )
+Línea: 14
+Posición: 62
+----------------------------------------
+Token: LBRACE
+Valor: {
+Línea: 14
+Posición: 64
+----------------------------------------
+Token: PRINT
+Valor: print
+Línea: 15
+Posición: 82
+----------------------------------------
+Token: LPAREN
+Valor: (
+Línea: 15
+Posición: 87
+----------------------------------------
+Token: STRING_LITERAL
+Valor: Positivo
+Línea: 15
+Posición: 88
+----------------------------------------
+Token: RPAREN
+Valor: )
+Línea: 15
+Posición: 98
+----------------------------------------
+Token: SEMI
+Valor: ;
+Línea: 15
+Posición: 99
+----------------------------------------
+Token: RBRACE
+Valor: }
+Línea: 16
+Posición: 113
+----------------------------------------
+Token: ELSE
+Valor: else
+Línea: 16
+Posición: 115
+----------------------------------------
+Token: LBRACE
+Valor: {
+Línea: 16
+Posición: 120
+----------------------------------------
+Token: PRINT
+Valor: print
+Línea: 17
+Posición: 138
+----------------------------------------
+Token: LPAREN
+Valor: (
+Línea: 17
+Posición: 143
+----------------------------------------
+Token: STRING_LITERAL
+Valor: Negativo
+Línea: 17
+Posición: 144
+----------------------------------------
+Token: RPAREN
+Valor: )
+Línea: 17
+Posición: 154
+----------------------------------------
+Token: SEMI
+Valor: ;
+Línea: 17
+Posición: 155
+----------------------------------------
+Token: RBRACE
+Valor: }
+Línea: 18
+Posición: 169
+----------------------------------------
+Token: RETURN
+Valor: return
+Línea: 19
+Posición: 183
+----------------------------------------
+Token: INT_NUM
+Valor: 0
+Línea: 19
+Posición: 190
+----------------------------------------
+Token: SEMI
+Valor: ;
+Línea: 19
+Posición: 191
+----------------------------------------
+Token: RBRACE
+Valor: }
+Línea: 20
+Posición: 201
+----------------------------------------

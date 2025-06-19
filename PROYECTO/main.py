@@ -1,307 +1,206 @@
 import sys
 import os
-from Lexer import lexer
+from Lexer import lexer, test_lexer # Keep test_lexer for potential direct lexer testing
 from Parser import parser
-from ASTBuilder import ASTBuilder
+from ASTBuilder import ASTBuilder, build_and_display_ast # build_and_display_ast for quick AST view
 from ScopeChecker import ScopeChecker
-from TypeChecker import TypeChecker # Import the new TypeChecker
+from TypeChecker import TypeChecker
 
-# Global constants for file paths
-ARCHIVO_ENTRADA = "codigo.txt"
-ARCHIVO_TOKENS = "salida/tokens.txt"
-ARCHIVO_ERRORES_LEXICOS = "salida/errores_lexicos.txt"
-ARCHIVO_ERRORES_SINTACTICOS = "salida/errores_sintacticos.txt"
-AST_OUTPUT_FILE = "salida/ast.txt"
-PARSE_TRACE_OUTPUT_FILE = "salida/parse_trace.txt"
-SCOPE_ERRORS_FILE = "salida/errores_ambito.txt"
-TYPE_ERRORS_FILE = "salida/errores_tipo.txt" # For TypeChecker errors
+# --- Configuration ---
+OUTPUT_DIR = "salida"
+# Error files managed by respective modules, but main can coordinate clearing/setup if needed.
+LEXER_ERROR_FILE = os.path.join(OUTPUT_DIR, "errores_lexicos.txt")
+PARSER_ERROR_FILE = os.path.join(OUTPUT_DIR, "errores_sintacticos.txt")
+SCOPE_ERROR_FILE = os.path.join(OUTPUT_DIR, "errores_ambito.txt")
+TYPE_ERROR_FILE = os.path.join(OUTPUT_DIR, "errores_tipo.txt")
+AST_OUTPUT_FILE = os.path.join(OUTPUT_DIR, "ast_generated.txt") # Main AST output
+TOKEN_TRACE_FILE = os.path.join(OUTPUT_DIR, "token_trace_generated.txt") # Main token trace output
 
-# Setup: Create 'salida' directory if it doesn't exist
-# This is better done once at the start of main or test_compiler_stages
-# if not os.path.exists('salida'):
-#     os.makedirs('salida')
-
-def test_compiler_stages():
-    # Example codes
-    code_valid_scope_type = """
-    int suma(int a, int b) {
-        int resultado = a + b;
-        return resultado;
-    }
-    void main() {
-        int x = 5;
-        int y = 10;
-        int z = suma(x, y);
-        print(z);
-        string s = "hello";
-        s = s + " world";
-        print(s);
-        bool flag = true;
-        if (flag) {
-            print(1);
-        } else {
-            print(0);
-        }
-        float f1 = 0.5;
-        int i1 = 10;
-        f1 = i1 + f1; // float = int + float -> float
-        print(f1);
-        i1 = 2 + 3 * 4; // int = int + int * int -> int
-        print(i1);
-    }"""
-
-    code_scope_error_y_undefined = """
-    void main() {
-        int x = 5;
-        {
-            int y = x + 2;
-            print(y);
-        }
-        print(y); // Scope Error: y not defined here
-    }"""
-
-    code_scope_error_x_redeclared = """
-    void main() {
-        int x = 5;
-        int x = 10; // Scope Error: x redeclared
-    }"""
-
-    code_scope_error_func_undefined = """
-    void main() {
-        calcular(); // Scope Error: calcular not defined
-    }"""
-
-    code_type_error_string_plus_int = """
-    void main() {
-        string s = "hello";
-        int count = 5;
-        print(s + count); // Type Error: string + int
-    }"""
-
-    code_type_error_if_condition = """
-    void main() {
-        int x = 10;
-        if (x) { // Type Error: condition not bool
-            print(1);
-        }
-    }"""
-
-    code_type_error_assignment = """
-    void main() {
-        int num;
-        num = "this is not a number"; // Type Error: string to int
-    }"""
-
-    code_type_error_return = """
-    int get_val() {
-        string msg = "message";
-        return msg; // Type Error: returning string from int function
-    }
-    void main() {
-        int v = get_val();
-        print(v);
-    }"""
-
-    code_type_error_func_arg = """
-    int add(int a, int b) {
-        return a + b;
-    }
-    void main() {
-        int res = add(5, "world"); // Type Error: "world" is not int for b
-        print(res);
-    }"""
-
-    # Test cases: (name, code, expect_scope_error, expect_type_error_or_related_scope_issue)
-    examples = [
-        ("1. Programa válido (Scope & Type)", code_valid_scope_type, False, False),
-        ("2. Error de ámbito (y no definida)", code_scope_error_y_undefined, True, True),
-        ("3. Error de ámbito (x redeclarada)", code_scope_error_x_redeclared, True, False), # Type check might not run or pass if scope fails critically
-        ("4. Error de ámbito (función no def)", code_scope_error_func_undefined, True, True),
-        ("5. Error de tipo (string + int)", code_type_error_string_plus_int, False, True),
-        ("6. Error de tipo (condición if)", code_type_error_if_condition, False, True),
-        ("7. Error de tipo (asignación)", code_type_error_assignment, False, True),
-        ("8. Error de tipo (return)", code_type_error_return, False, True),
-        ("9. Error de tipo (argumento func)", code_type_error_func_arg, False, True),
+def clear_previous_logs():
+    """Clears log files from previous runs."""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    log_files = [
+        LEXER_ERROR_FILE, PARSER_ERROR_FILE,
+        SCOPE_ERROR_FILE, TYPE_ERROR_FILE,
+        AST_OUTPUT_FILE, TOKEN_TRACE_FILE
     ]
-
-    print("=== PRUEBAS DEL PIPELINE DEL COMPILADOR ===")
-    overall_success = True
-
-    project_dir = os.path.dirname(__file__) # PROYECTO directory
-    salida_dir = os.path.join(project_dir, 'salida')
-    if not os.path.exists(salida_dir):
-        os.makedirs(salida_dir)
-
-    # Global error file paths using project_dir
-    g_err_lex_file = os.path.join(salida_dir, "errores_lexicos.txt")
-    g_err_sin_file = os.path.join(salida_dir, "errores_sintacticos.txt")
-    g_scope_err_file = os.path.join(salida_dir, "errores_ambito.txt")
-    g_type_err_file = os.path.join(salida_dir, "errores_tipo.txt")
-
-
-    for name, code, expect_scope_error, expect_type_error in examples:
-        print(f"\n--- Test Case: {name} ---")
-        print("Código:")
-        print(code.strip())
-        
-        # Clear previous error logs for this specific test case by overwriting them
-        # These files will store cumulative errors from all tests if not cleared per test.
-        # For pipeline testing, it's often better to have separate files per test or clear them.
-        # Here, we'll append, so they become a log for the entire test run.
-        # Individual test success is determined by expect_X_error flags.
-        # However, for clarity in a single test run output, let's clear them before each test case run.
-
-        for f_path in [g_err_lex_file, g_err_sin_file, g_scope_err_file, g_type_err_file]:
-            try:
-                open(f_path, "w").close() # Clear file content for this test run
-            except IOError:
-                print(f"Warning: Could not clear file {f_path}")
-
-
-        # 1. AST Building (Lexer + Parser + ASTBuilder)
-        # Assuming Lexer and Parser correctly write to their error files if issues occur.
-        builder = ASTBuilder(
-            lexer_error_file=g_err_lex_file,
-            parser_error_file=g_err_sin_file,
-            parser_trace_file=os.path.join(salida_dir, f"parse_trace_{name.replace(' ', '_')}.txt")
-        )
-        ast = builder.build_ast(code)
-        # builder.ast_to_file(os.path.join(salida_dir, f"ast_{name.replace(' ', '_')}.txt"))
-
-
-        if ast is None:
-            print("❌ No se pudo construir el AST. Falló la prueba.")
-            # Check if lexical or syntax errors were expected. This example suite doesn't explicitly test for them.
-            overall_success = False
-            continue
-        print("✅ AST construido exitosamente.")
-
-        # 2. Scope Checking
-        scope_checker = ScopeChecker(error_file=g_scope_err_file)
-        actual_scope_error_occurred = False
-        scope_error_messages = [] # ScopeChecker might log multiple errors
-
+    for log_file in log_files:
         try:
-            scope_checker.check_program(ast)
-            scope_error_messages = scope_checker.get_errors() # Assuming ScopeChecker has get_errors()
-            if not scope_error_messages:
-                print("✅ Verificación de ámbito completada sin errores reportados por el checker.")
-            else:
-                actual_scope_error_occurred = True
-                print(f"⚠️ Errores de ámbito detectados por ScopeChecker:")
-                for err_msg in scope_error_messages: print(f"   - {err_msg}")
+            open(log_file, 'w').close() # Create or truncate the file
+        except IOError as e:
+            print(f"Warning: Could not clear log file {log_file}: {e}")
 
-        except Exception as e_scope:
-            actual_scope_error_occurred = True
-            scope_error_messages.append(f"Excepción inesperada en ScopeChecker: {type(e_scope).__name__}: {str(e_scope)}")
-            print(f"❌ {scope_error_messages[-1]}")
-            overall_success = False
+def compile_file(source_code_path):
+    """
+    Compiles the given source code file through all stages.
+    """
+    print(f"--- Compiling: {source_code_path} ---")
 
-        if expect_scope_error:
-            if actual_scope_error_occurred:
-                print(f"✅ Prueba de ámbito pasada: Error(es) de ámbito esperado(s) y ocurrido(s).")
-            else:
-                print(f"❌ Falló la prueba de ámbito: Se esperaba un error de ámbito pero no se reportó ninguno.")
-                overall_success = False
+    try:
+        with open(source_code_path, 'r', encoding='utf-8') as f:
+            code = f.read()
+    except FileNotFoundError:
+        print(f"Error: Source code file not found: {source_code_path}")
+        return False
+    except IOError as e:
+        print(f"Error reading source code file {source_code_path}: {e}")
+        return False
+
+    clear_previous_logs()
+
+    # 1. AST Building (Lexer + Parser are used by ASTBuilder)
+    print("\n[Phase 1: AST Construction]")
+    ast_builder = ASTBuilder(output_dir=OUTPUT_DIR)
+    ast = None
+    lexical_errors_exist = False
+    syntax_errors_exist = False
+
+    try:
+        ast = ast_builder.build_ast(code)
+        # Check if lexer/parser error files were populated by them directly
+        if os.path.exists(LEXER_ERROR_FILE) and os.path.getsize(LEXER_ERROR_FILE) > 0:
+            lexical_errors_exist = True
+            print("Lexical errors detected. See 'salida/errores_lexicos.txt'.")
+
+        if os.path.exists(PARSER_ERROR_FILE) and os.path.getsize(PARSER_ERROR_FILE) > 0:
+            syntax_errors_exist = True
+            print("Syntax errors detected. See 'salida/errores_sintacticos.txt'.")
+
+        if ast and not lexical_errors_exist and not syntax_errors_exist:
+            print("AST constructed successfully.")
+            ast_builder.save_ast_to_file(filename=os.path.basename(AST_OUTPUT_FILE))
+            # ast_builder.print_ast() # Optional: print AST to console
+            # ast_builder.save_token_trace_to_file(filename=os.path.basename(TOKEN_TRACE_FILE)) # Optional
+        elif not ast:
+            print("AST construction failed. Further checks may be unreliable.")
+            # No need to return False yet, Scope/Type checkers might still run on partial AST if desired
+            # but typically compilation would halt or be marked as failed.
+            # For this example, we'll let it proceed to show error reporting from all phases.
+    except Exception as e:
+        print(f"Error during AST construction phase: {e}")
+        # AST construction failed critically, probably should not proceed.
+        return False
+
+    if lexical_errors_exist or syntax_errors_exist:
+        print("Compilation halted due to lexical or syntax errors.")
+        return False # Halt if fundamental parsing errors occurred
+
+    if not ast:
+        print("AST is None after build phase, cannot proceed with semantic checks.")
+        return False
+
+
+    # 2. Scope Checking
+    print("\n[Phase 2: Scope Checking]")
+    scope_checker = ScopeChecker(output_dir=OUTPUT_DIR, error_filename=os.path.basename(SCOPE_ERROR_FILE))
+    scope_errors_found = False
+    try:
+        scope_checker.check_program(ast) # ScopeChecker logs errors internally
+        if scope_checker.errors:
+            scope_errors_found = True
+            print(f"{len(scope_checker.errors)} scope error(s) found.")
+            scope_checker.save_errors_to_file() # Saves errors to its configured file
         else:
-            if actual_scope_error_occurred:
-                print(f"❌ Falló la prueba de ámbito: Error(es) de ámbito inesperado(s):")
-                for err in scope_error_messages: print(f"   - {err}")
-                overall_success = False
-            else:
-                print(f"✅ Prueba de ámbito pasada: No se esperaban errores de ámbito y ninguno ocurrió.")
+            print("Scope checking completed successfully.")
+    except Exception as e:
+        print(f"Error during Scope Checking phase: {e}")
+        scope_errors_found = True # Treat exceptions as errors
 
-        # 3. Type Checking
-        type_checker = TypeChecker(scope_checker.symbol_table)
-        actual_type_errors_reported = []
-        type_check_exception_message = ""
+    # print(scope_checker.symbol_table.get_symbol_table_report()) # Optional: for debugging
 
-        # Only run type checker if no scope errors were expected OR if they were expected but didn't prevent symbol table use
-        # This logic can be refined: if critical scope errors occurred, type checking might be meaningless.
-        # For now, run if scope check passed OR if scope errors were expected (implying AST might still be checkable)
-        # A more robust check: if actual_scope_error_occurred AND not expect_scope_error, then maybe skip.
+    if scope_errors_found:
+        print("Compilation has scope errors.")
+        # Depending on language design, type checking might still proceed or halt.
+        # For this example, let type checking run to find more potential errors.
+        # However, a real compiler might halt or have a flag.
 
-        # Let's always run TypeChecker if AST is available and ScopeChecker ran,
-        # as TypeChecker might find errors due to incomplete symbol table from scope errors.
-        # The `expect_type_error` flag will determine if these are "good" errors.
 
-        try:
-            type_checker.check_program(ast)
-            actual_type_errors_reported = type_checker.get_errors()
-            if not actual_type_errors_reported:
-                print("✅ Verificación de tipo completada sin errores reportados por el checker.")
-            else:
-                print(f"⚠️ Errores de tipo detectados por TypeChecker:")
-                with open(g_type_err_file, "a") as f: # Append to global type error log
-                    f.write(f"--- Test Case: {name} ---\n")
-                    for error_msg in actual_type_errors_reported:
-                        print(f"   - {error_msg}")
-                        f.write(f"- {error_msg}\n")
-                    f.write("\n")
-
-        except Exception as e_type_check:
-            type_check_exception_message = f"Excepción inesperada en TypeChecker: {type(e_type_check).__name__}: {str(e_type_check)}"
-            print(f"❌ {type_check_exception_message}")
-            actual_type_errors_reported.append(type_check_exception_message) # Add exception to errors
-            overall_success = False
-
-        actual_type_error_occurred_flag = bool(actual_type_errors_reported) # Check if any errors were logged
-
-        if expect_type_error:
-            if actual_type_error_occurred_flag:
-                print(f"✅ Prueba de tipo pasada: Error(es) de tipo esperado(s) y ocurrido(s).")
-            else:
-                print(f"❌ Falló la prueba de tipo: Se esperaba un error de tipo pero no se reportó ninguno.")
-                overall_success = False
+    # 3. Type Checking
+    print("\n[Phase 3: Type Checking]")
+    type_checker = TypeChecker(symbol_table=scope_checker.symbol_table,
+                               output_dir=OUTPUT_DIR,
+                               error_filename=os.path.basename(TYPE_ERROR_FILE))
+    type_errors_found = False
+    try:
+        type_checker.check_program(ast) # TypeChecker logs errors internally
+        if type_checker.errors:
+            type_errors_found = True
+            print(f"{len(type_checker.errors)} type error(s) found.")
+            type_checker.save_errors_to_file() # Saves errors
         else:
-            if actual_type_error_occurred_flag:
-                print(f"❌ Falló la prueba de tipo: Error(es) de tipo inesperado(s) reportado(s):")
-                for err in actual_type_errors_reported: print(f"   - {err}")
-                overall_success = False
-            else:
-                print(f"✅ Prueba de tipo pasada: No se esperaban errores de tipo y ninguno ocurrió.")
+            print("Type checking completed successfully.")
+    except Exception as e:
+        print(f"Error during Type Checking phase: {e}")
+        type_errors_found = True
 
-        print(f"--- Fin Test Case: {name} ---")
 
-    print("\n--- Resumen de Pruebas del Compilador ---")
-    if overall_success:
-        print("✅ Todas las pruebas del compilador evaluadas pasaron sus expectativas.")
+    # --- Compilation Summary ---
+    print("\n--- Compilation Summary ---")
+    if not lexical_errors_exist and not syntax_errors_exist and not scope_errors_found and not type_errors_found:
+        print(f"Successfully compiled '{source_code_path}'.")
+        print(f"AST saved to '{AST_OUTPUT_FILE}'.")
+        # Add other output info if any (e.g., token trace)
+        return True
     else:
-        print("❌ Algunas pruebas del compilador fallaron en sus expectativas.")
-
+        print(f"Compilation of '{source_code_path}' failed with errors:")
+        if lexical_errors_exist: print(f"  - Lexical errors reported in '{LEXER_ERROR_FILE}'.")
+        if syntax_errors_exist: print(f"  - Syntax errors reported in '{PARSER_ERROR_FILE}'.")
+        if scope_errors_found: print(f"  - Scope errors reported in '{SCOPE_ERROR_FILE}'.")
+        if type_errors_found: print(f"  - Type errors reported in '{TYPE_ERROR_FILE}'.")
+        return False
 
 if __name__ == "__main__":
-    project_root = os.path.dirname(__file__) # PROYECTO
-
-    parsetab_file = os.path.join(project_root, "parsetab.py")
-    parser_out_file = os.path.join(project_root, "parser.out")
+    # Remove PLY's generated parsetab.py and parser.out for cleaner rebuilds,
+    # especially during development.
+    # These files are typically in the same directory as Parser.py.
+    project_dir = os.path.dirname(__file__) # PROYECTO directory
+    parsetab_file = os.path.join(project_dir, "parsetab.py")
+    # parser_out_file = os.path.join(project_dir, "parser.out") # If yacc(debug=True) was used
 
     if os.path.exists(parsetab_file):
         try: os.remove(parsetab_file)
-        except OSError as e: print(f"Could not remove {parsetab_file}: {e}")
-    if os.path.exists(parser_out_file):
-        try: os.remove(parser_out_file)
-        except OSError as e: print(f"Could not remove {parser_out_file}: {e}")
+        except OSError as e: print(f"Warning: Could not remove {parsetab_file}: {e}")
+    # if os.path.exists(parser_out_file):
+    #     try: os.remove(parser_out_file)
+    #     except OSError as e: print(f"Warning: Could not remove {parser_out_file}: {e}")
 
-    # Clear global log files at the start of the entire test suite run
-    # These files will now accumulate errors from all test cases in this run.
-    # If you want per-test-case logs, create unique filenames inside the loop.
-    salida_dir_main = os.path.join(project_root, 'salida')
-    if not os.path.exists(salida_dir_main):
-        os.makedirs(salida_dir_main)
 
-    files_to_clear_globally = [
-        "salida/errores_lexicos.txt", "salida/errores_sintacticos.txt",
-        "salida/errores_ambito.txt", "salida/errores_tipo.txt",
-        "salida/ast.txt", "salida/parse_trace.txt" # General trace files
-    ]
-    for f_name_rel in files_to_clear_globally:
-        full_path = os.path.join(project_root, f_name_rel)
+    if len(sys.argv) > 1:
+        input_file = sys.argv[1]
+    else:
+        # Create a default 'codigo.txt' if none provided, for demonstration.
+        input_file = "codigo.txt"
+        print(f"No input file specified. Using default: '{input_file}'")
+        default_code_content = """
+// Default example code for main.py
+void main() {
+    int x = 10;
+    string message = "Hello, Compiler!";
+
+    if (x > 5) {
+        print(message);
+    }
+
+    int y = 0;
+    // Example of a for loop
+    for (int i = 0; i < 3; i = i + 1) {
+        y = y + i;
+        print(y);
+    }
+
+    // Undeclared variable to show scope error
+    // print(undeclared_var);
+
+    // Type error example
+    // x = "this should be an int";
+}
+"""
         try:
-            open(full_path, "w").close() # Create or clear the file
-        except IOError:
-            print(f"Warning: Could not clear/create file {full_path}")
+            with open(input_file, 'w', encoding='utf-8') as f:
+                f.write(default_code_content)
+            print(f"Created default '{input_file}'. Please edit or provide a file path as an argument.")
+        except IOError as e:
+            print(f"Could not create default input file '{input_file}': {e}")
+            sys.exit(1)
 
-    test_compiler_stages()
-
-
+    compile_file(input_file)

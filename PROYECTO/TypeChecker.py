@@ -301,7 +301,7 @@ class TypeChecker:
 
     def get_errors(self):
         return self.errors
-
+'''
 if __name__ == '__main__':
     print("TypeChecker class with statement checking logic.")
 
@@ -481,4 +481,4 @@ if __name__ == '__main__':
     else:
         print("\n--- No type errors detected in these specific tests (or errors handled as expected). ---")
 
-```
+'''

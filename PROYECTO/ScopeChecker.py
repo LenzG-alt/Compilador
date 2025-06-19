@@ -129,10 +129,11 @@ class SymbolTable:
         return "\n".join(report)
 
 class ScopeChecker:
-    def __init__(self):
+    def __init__(self, error_file=None):
         self.symbol_table = SymbolTable()
         self.errors = []
-    
+        self.error_file = error_file
+
     def check_program(self, ast):
         if ast[0] != 'program':
             raise ValueError("AST no válido: debe comenzar con 'program'")

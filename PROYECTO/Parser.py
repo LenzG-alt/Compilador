@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from .Lexer import tokens, lexer
+from Lexer import tokens, lexer
 
 # Precedence rules for operators
 precedence = (

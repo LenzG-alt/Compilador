@@ -1,12 +1,15 @@
 import os
-from .Parser import parser, lexer  # Asegúrate de importar lexer desde tu Parser.py
+from Parser import parser, lexer  # Asegúrate de importar lexer desde tu Parser.py
 
 
 class ASTBuilder:
-    def __init__(self):
+    def __init__(self, lexer_error_file=None, parser_error_file=None, parser_trace_file=None):
         self.parse_trace = []
         self.ast = None
-    
+        self.lexer_error_file = lexer_error_file
+        self.parser_error_file = parser_error_file
+        self.parser_trace_file = parser_trace_file
+
     def build_ast(self, input_code):
         """Construye el AST a partir del código de entrada"""
         try:

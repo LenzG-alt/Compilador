@@ -1,0 +1,5 @@
+--- Test Case: 9. Error de tipo (argumento func) ---
+- Cannot infer type for unhandled expression node type: '+'.
+- Type mismatch in argument 2 of function 'add': Expected 'int', got 'string'.
+- Undeclared variable 'res'.
+

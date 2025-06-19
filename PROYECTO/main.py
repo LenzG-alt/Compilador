@@ -1,10 +1,10 @@
 import sys
 import os
-from .Lexer import lexer
-from .Parser import parser
-from .ASTBuilder import ASTBuilder
-from .ScopeChecker import ScopeChecker
-from .TypeChecker import TypeChecker # Import the new TypeChecker
+from Lexer import lexer
+from Parser import parser
+from ASTBuilder import ASTBuilder
+from ScopeChecker import ScopeChecker
+from TypeChecker import TypeChecker # Import the new TypeChecker
 
 # Global constants for file paths
 ARCHIVO_ENTRADA = "codigo.txt"
@@ -304,4 +304,4 @@ if __name__ == "__main__":
 
     test_compiler_stages()
 
-```
+

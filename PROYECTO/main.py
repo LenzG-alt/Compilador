@@ -160,11 +160,7 @@ def test_compiler_stages():
 
         # 1. AST Building (Lexer + Parser + ASTBuilder)
         # Assuming Lexer and Parser correctly write to their error files if issues occur.
-        builder = ASTBuilder(
-            lexer_error_file=g_err_lex_file,
-            parser_error_file=g_err_sin_file,
-            parser_trace_file=os.path.join(salida_dir, f"parse_trace_{name.replace(' ', '_')}.txt")
-        )
+        builder = ASTBuilder()
         ast = builder.build_ast(code)
         # builder.ast_to_file(os.path.join(salida_dir, f"ast_{name.replace(' ', '_')}.txt"))
 

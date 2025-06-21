@@ -1,13 +1,13 @@
 // Ejemplo 1: Hola Mundo
-void main() {
+main() {
     print("Hola Mundo");
 }
 
 
 
 // Ejemplo 2: Bucles Anidados
-void main() {
-    int i, j;
+main() {
+    int i;
     for (i = 1; i < 5; i = i + 1) {
         for (j = 1; j < 5; j = j + 1) {
             print(i);
@@ -28,7 +28,7 @@ int factorial(int n) {
     }
 }
 
-void main() {
+main() {
     int num = 5;
     int result = factorial(num);
     print(result);
